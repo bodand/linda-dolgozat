@@ -1,0 +1,12 @@
+# LaTeX
+*.log
+*.aux
+*.syntex.gz
+*.thm
+*.toc
+*.pdf
+*.dvi
+*.out
+
+# vim
+.*~
