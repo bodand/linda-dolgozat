@@ -1,12 +1,14 @@
 # LaTeX
 *.log
 *.aux
-*.syntex.gz
+*.synctex.gz
 *.thm
 *.toc
 *.pdf
 *.dvi
 *.out
+*.bbl
+*.blg
 
 # vim
 .*~

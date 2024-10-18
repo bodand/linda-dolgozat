@@ -1,0 +1,45 @@
+down
+Src1: file color 0x123456 "src1.c"
+move .2 
+
+Src2: file color 0xFF0021 "src2.c"
+move .2
+
+Src3: file color 0x98AF23 "src3.c"
+move .2
+
+Src4: file color 0x77BBEE "src4.c"
+
+line color Src1.color right .2 from Src1.e
+oval color Src1.color "CC" fit
+arrow color Src1.color right .2
+Obj1: box color Src1.color width Src1.width "src1.o"
+
+line color Src2.color right .2 from Src2.e
+oval color Src2.color "CC" fit
+arrow color Src2.color right .2
+Obj2: box color Src2.color width Src2.width "src2.o"
+
+line color Src3.color right .2 from Src3.e
+oval color Src3.color "CC" fit
+arrow color Src3.color right .2
+Obj3: box color Src3.color width Src3.width "src3.o"
+
+line color Src4.color right .2 from Src4.e
+oval color Src4.color "CC" fit
+arrow color Src4.color right .2
+Obj4: box color Src4.color width Src4.width "src4.o"
+
+Linker: oval at (Obj1.x+1, Obj2.y + (Obj3.y - Obj2.y)/2) "LD" fit
+
+line color Obj1.color right .2 from Obj1.e \
+    then to Linker.w
+line color Obj2.color right .2 from Obj2.e \
+    then to Linker.w
+line color Obj3.color right .2 from Obj3.e \
+    then to Linker.w
+line color Obj4.color right .2 from Obj4.e \
+    then to Linker.w
+
+arrow .2 from Linker.e
+Exe: oval thick thick "exec" fit
