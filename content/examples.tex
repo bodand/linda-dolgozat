@@ -20,12 +20,74 @@ A parallel fordítás irányban elindulva azonban találjuk a ninja eszközt, am
 Ennek megfelelően több esetben a ninja gyorsabb fordítási sebességet biztosít, pusztán a jobban kidolgozott párhuzamosítási alrendszere miatt.
 
 % TODO MPI rövi.
-Ezt az ötletet felhasználva egy Linda alapú megvalósítást is lehetséges készíteni, amelyik a Linda és az MPI lehetőségeit kihasználva biztosít egy párhuzamosítást 
-kiemelten kihasználó fordító környezetet.
+Ezt az ötletet felhasználva egy Linda alapú megvalósítást is lehetséges készíteni, amelyik a Linda és az alatta található MPI lehetőségeit kihasználva biztosít egy párhuzamosítást kiemelten kihasználó fordító környezetet.
 A megvalósítás a Linda Build kifejezésből az ,,lb'' nevet viseli.
 
+% TODO TS
+Az általános ötlet egyszer: a fordítandó fájlok listáját feltöltjük a TS--be, amiből a feldolgozó folyamatok az éppen felhasználtat ki tudják venni.
+Az éppen kivett parancsot feldolgozza egy--egy megfelelő műveletet végző folyamat, majd a készített fájlt visszateszi a TS--be, ezzel lehetővé téve más folyamatoknak, hogy az attól a fájltól függő parancsot végrehajtsa.
+
+A főprogram logikája kifejezetten egyszerű, a pszeudokód látható \aref{lst:lb-algo}.~listázásban.
+A ,,\texttt{read\_config\_file}'' függvény beolvassa a végrehajtandó lépéseket, majd azokat beírja a kód a TS--be.
+Ennek a függvénynek a tárgyalása nem hordoz a párhuzamosítás szempontjából érdemi információt, így elhagyom.
+
+\begin{lstlisting}[numbers=left, language=C++, label=lst:lb-algo, caption={Az lb főprogram logikája}]
+std::vector<command> commands = read_config_file();
+for (const auto& [command_type, output, inputs] : commands) {
+	out(command_type, output, inputs);
+}
+int worker_count = start_workers();
+in("_WORKERS_FINISHED", worker_count);
+\end{lstlisting}
+
+A ,,\texttt{start\_workers}'' függvény érdekesebb: a jelenlegi párhuzamosan futó folyamatok számával azonos számú függvényt indít el a Linda ,,\texttt{eval}'' függvényét felhasználva, amelyek a fordítási és összeillesztési (linkelési) lépéseket hajtják végre.
+A párhuzamosság fokát a ,,\texttt{lrt::this\_runtime()}'' segédfüggvényen keresztül visszakapott ,,\texttt{runtime\&}'' objektumból kéri le, amely a teljes kommunikációs alrendszert kezelő objektumra hivatkozik.
+Az így indított folyamatok fogják a tényleges fordítási parancsok meghívását megvalósítani egy általános futtató eljárás meghívásán keresztül.
+Ez az függvény a számára érdekes ennesek első értékét, a futtatandó program nevét, az előre betöltendő kapcsolók listáját és a saját azonosítóját kapja meg.
+(Az azonosító csak a hiba-diagnózist és az egy egyedi értékkel való visszatérést teszi könnyen megoldhatóvá, összességében lehagyható.)
+Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtatandó program közötti összerendelés beégetett sztringekként jelennek meg a kódban, de egy tényleges megvalósításban a kód a konfigurációs fájlból kerülnének valamilyen módon kiolvasásra: ez a kód és a konfigurációs fájl nyelvének egyszerűsége miatt elhagyásra került, mivel a párhuzamosítási lépéseket nem befolyásolja.
+
+\begin{lstlisting}[numbers=left, language=C++, label=lst:lb-startworkers, caption={Az fordító folyamatok indítása}]
+int 
+start_workers() {
+	int parallelism = lrt::this_runtime().world_size();
+	for (int i = 0; i < parallelism; ++i) {
+		eval("_CC_WORKER", worker("CC", "gcc", " -c", i));
+	}
+	for (int i = 0; i < parallelism; ++i) {
+		eval("_LD_WORKER", worker("LD", "gcc", "", i));
+	}
+	return parallelism;
+}
+\end{lstlisting}
+
+Ezek után a ,,\texttt{worker}'' függvény kódja tartalmaz még érdemi kódrészletet.
+Az ebben megjelenő ,,\texttt{execute\_process}'' részletes tárgyalását elhagyom, mert csak az operációs rendszertől függő ,,\texttt{fork+execve}'' és ,,\texttt{CreateProcessEx}'' rendszerhívások elfedését oldja meg, semmi érdemleges kódot nem tartalmaznak.
+
+A ,,\texttt{worker}'' függvény maga sem komplikált: addig pörög egy ciklusban, amíg talál általa végrehajtandó parancsokat.
+Amint ezek elfogytak, növeli a sikeresen lefutott folyamatok számát, és kilép.
+
+\begin{lstlisting}[numbers=left, language=C++, label=lst:lb-worker, caption={A futtató folyamat}]
+int
+worker(std::string cmd, std::string exe, std::string args, int worker_id) {
+	std::string output;
+	std::string inputs;
+	while (inp(cmd, ldb::ref(&output), ldb::ref(&inputs))) {
+		bool success = execute_process(exe, args, output, inputs);
+		if (!success) throw std::runtime_error(std::format("cannot run({}): {} {} -o {} {}", worker_id, exec, args, output, inputs))
+	}
+	
+	int current;
+	in("_WORKERS_FINISHED", ldb::ref(&current));
+	out("_WORKERS_FINISHED", current + 1);
+	
+	return worker_id;
+}
+\end{lstlisting}
+
+
 Az lb, a make és ninja eszközökhöz hasonlóan, egy konfigurációs fájl beolvasásával kezdi a futást, még mielőtt bármilyen fordítási lépést végrehajtana.
-Maga a konfigurációs fájl kifejezetten primitív, hiszen a program nem erre lett megvalósítva, pusztán a minimumot biztosítja, hogy használható legyen, mint fordítási lépéseket leíró fájl.
+Maga a konfigurációs fájl kifejezetten primitív, hiszen a program célja pusztán a párhuzamosítási lehetőségek bemutatása, emiatt a hozzá tartozó konfigurációs nyelv csak a minimumot biztosítja, hogy használható legyen, mint fordítási lépéseket leíró fájl.
 Minden sor három adatot tárol: fordítani (,,\texttt{CC}'') vagy összeilleszteni (,,\texttt{LD}'') kell az adott lépésben, a készítendő kimeneti fájl neve és egy felsorolás a bementi fájlokról.
 
 \Aref{lst:lb-conf}.~listázásban látható egy egyszerű konfiguráció, amely 4 forrásfájlból fordít egy ,,\texttt{exec}'' nevű futtatható fájlt.
