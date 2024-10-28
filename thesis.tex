@@ -36,6 +36,7 @@
 %\input{include/thesis-en}
 
 \input{include/preamble}
+%\renewcommand{\baselinestretch}{1.5}
 
 %--------------------------------------------------------------------------------------
 % Table of contents and the main text
@@ -58,12 +59,30 @@
 
 % Table of Contents
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\setcounter{tocdepth}{2}
 \tableofcontents\vfill
 
 
 % Declaration and Abstract
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \include{content/abstract}
+
+\renewcommand{\qedsymbol}{}
+\newtheorem{defn}{definíció}[chapter]
+\newtheorem{remark}{megjegyzés}[chapter]
+
+\newtheorem{xrcs}{feladat}[chapter]
+\newtheorem{sln}{megoldás}[xrcs]
+
+\newcommand{\lcmd}[1]{\textit{\textbf{#1}}}
+\newcommand{\un}{ún.\ }
+\newcommand{\ld}{ld.\ }
+\newcommand{\nes}{ennes}
+\newcommand{\rank}[1][{}]{{\selectlanguage{english}rank} \IsInteger{#1}{$#1$}{}}
+\newcommand{\bracketed}[1]{[#1]}
+\newcommand{\ts}{TS}
+\newcommand{\ats}{a \ts}
+\newcommand{\atslong}{az ennes tér}
 
 
 % The main part of the thesis
@@ -75,7 +94,7 @@
 \include{content/linda}
 \include{content/examples}
 %\include{content/template-usage}
-
+\include{content/summary}
 
 % Acknowledgements
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,7 +103,7 @@
 
 % List of Figures, Tables
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
 %\listoftables\addcontentsline{toc}{chapter}{\listtablename}
 
 

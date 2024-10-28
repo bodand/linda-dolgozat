@@ -7,6 +7,7 @@
 \fi
 
 \ifxetexorluatex
+  \usepackage{t1enc}
   \usepackage{fontspec}
 \else
   \usepackage[T1]{fontenc}
@@ -26,14 +27,14 @@
 %\usepackage{lastpage}
 
 \usepackage{anysize}
-%\usepackage{sectsty}
+\usepackage{sectsty}
 \usepackage{setspace} % For setting line spacing
 
 \usepackage[unicode]{hyperref} % For hyperlinks in the generated document.
 \usepackage{xcolor}
 \usepackage{listings} % For source code snippets.
 
-\usepackage[amsmath,thmmarks]{ntheorem} % Theorem-like environments.
+\usepackage[amsmath]{ntheorem} % Theorem-like environments.
 
 \usepackage[hang]{caption}
 
@@ -44,6 +45,7 @@
 	\setlength{\parindent}{2em}
 	\setlength{\parskip}{0em}
 	\frenchspacing
+    \renewcommand{\lstlistingname}{listázás}
 }
 
 \newcommand{\selectenglish}{
@@ -51,6 +53,7 @@
 	\setlength{\parindent}{0em}
 	\setlength{\parskip}{0.5em}
 	\nonfrenchspacing
+    \renewcommand{\lstlistingname}{Listing}
 	\renewcommand{\figureautorefname}{Figure}
 	\renewcommand{\tableautorefname}{Table}
 	\renewcommand{\partautorefname}{Part}
@@ -66,4 +69,8 @@
 % bodand
 \usepackage{easyReview}
 \usepackage{tabularx}
-\usepackage{listings}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+

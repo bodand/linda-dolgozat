@@ -9,6 +9,12 @@
 *.out
 *.bbl
 *.blg
+*.lof
+*.lot
+*.tdo
+
+# TeXstudio
+*.txss2
 
 # vim
 .*~
