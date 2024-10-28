@@ -1,0 +1,36 @@
+down
+
+TS0: box width .7 height .7 color gray
+
+text with .n at TS0.n "(1, 2, 3)" small
+text "(\"A\", 42)" small
+text "..." big
+TS0L: text "Linda TS" with .nw at TS0.sw - (.05, -.023)
+
+    text with .w at TS0.ne - (.074, .05) "int x;" ljust monospace
+AT: text with .w at TS0.ne - (.273, .18) "rd(\"A\", ?x);" ljust monospace color gray
+    text with .w at TS0.ne - (.4, .3)    "assert(x == 42);" ljust monospace color gray
+    text with .w at TS0.ne - (.56, .42)   "assert(rdp(\"A\", ?x));" ljust monospace color gray
+    text with .w at TS0.ne - (-.01, .54)   "..." ljust monospace color gray
+
+aoffs = .32
+arrow <- from (AT.w.x + .08 + aoffs, AT.w.y - .01) to AT.w + (aoffs, -.01) color orange
+
+TS1: box at (1, -.8) width .7 height .7 color gray
+
+
+    text with .w at TS1.ne - (.074, .05) "int x;" ljust monospace
+    text with .w at TS1.ne - (.273, .18) "rd(\"A\", ?x);" ljust monospace
+    text with .w at TS1.ne - (.4, .3)    "assert(x == 42);" ljust monospace color green
+    text with .w at TS1.ne - (.56, .42)   "assert(rdp(\"A\", ?x));" ljust monospace color green
+AT: text with .w at TS1.ne - (-.01, .54)   "..." ljust monospace color gray
+
+aoffs = .03
+arrow <- from (AT.w.x + .08 + aoffs, AT.w.y - .01) to AT.w + (aoffs, -.01) color orange
+
+text with .n at TS1.n "(1, 2, 3)" small
+text "(\"A\", 42)" small color orange
+text "..." big
+TS1L: text "Linda TS" with .nw at TS1.sw - (.05, -.023)
+
+arc -> from TS0.s - (0, .2) to TS1.w - (.1, 0)

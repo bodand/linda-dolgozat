@@ -1,0 +1,49 @@
+A0S: box "A" fit fill LightGreen
+     box "A" same
+A0E: box "A" same
+
+B0S: box "B" fit fill LightBlue
+     box "B" same
+B0E: box "B" same
+
+C0S: box "C" fit fill Tomato
+     box "C" same
+C0E: box "C" same
+
+A1S: box "A" fit fill LightGreen at (-.5, -.7)
+     box "A" same
+A1E: box "A" same
+
+move
+
+B1S: box "B" fit fill LightBlue
+     box "B" same
+B1E: box "B" same
+
+move
+
+C1S: box "C" fit fill Tomato
+     box "C" same
+C1E: box "C" same
+
+RootBox: box with .nw at (A0S.nw.x - .12, A0S.nw.y + .19) width (C0E.e.x - A0S.w.x + .24) color LightGray
+text with .nw at RootBox.nw "root" color gray
+
+PABox: box with .nw at (A1S.nw.x - .12, A1S.nw.y + .19) width (A0E.e.x - A0S.w.x + .24) color LightGray
+text with .nw at PABox.nw "P1" same
+
+PBBox: box with .nw at (B1S.nw.x - .12, B1S.nw.y + .19) width (B0E.e.x - B0S.w.x + .24) same
+text with .nw at PBBox.nw "P2" same
+
+PCBox: box with .nw at (C1S.nw.x - .12, C1S.nw.y + .19) width (C0E.e.x - C0S.w.x + .24) same
+text with .nw at PCBox.nw "P3" same
+
+offs = .06
+hoff = .04
+arrow <- from ((A0S.sw.x + A0E.se.x)/2 + hoff, A0S.s.y - offs) to ((A1S.nw.x + A1E.ne.x)/2 + hoff, A1S.n.y + offs) color blue
+arrow <- from ((B0S.sw.x + B0E.se.x)/2 + hoff, B0S.s.y - offs) to ((B1S.nw.x + B1E.ne.x)/2 + hoff, B1S.n.y + offs) color blue
+arrow <- from ((C0S.sw.x + C0E.se.x)/2 + hoff, C0S.s.y - offs) to ((C1S.nw.x + C1E.ne.x)/2 + hoff, C1S.n.y + offs) color blue
+arrow -> from ((A0S.sw.x + A0E.se.x)/2 - hoff, A0S.s.y - offs) to ((A1S.nw.x + A1E.ne.x)/2 - hoff, A1S.n.y + offs) color red
+arrow -> from ((B0S.sw.x + B0E.se.x)/2 - hoff, B0S.s.y - offs) to ((B1S.nw.x + B1E.ne.x)/2 - hoff, B1S.n.y + offs) color red
+arrow -> from ((C0S.sw.x + C0E.se.x)/2 - hoff, C0S.s.y - offs) to ((C1S.nw.x + C1E.ne.x)/2 - hoff, C1S.n.y + offs) color red
+
