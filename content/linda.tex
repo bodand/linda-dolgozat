@@ -14,7 +14,7 @@ Ezek között találhatóak több esetben a HPC környezetben klasszikusan előf
 % TODO PyLinda
 
 A másik kulcsa az egyszerűségnek, hogy az előzőekben leírt gazdanyelv kiegészítéséhez pusztán hat műveletet vagy szabad függvényt ({\selectlanguage{english}free function}) használ fel.
-Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{tuple--space}, innentől, az eredeti publikációt követve: \ts, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
+Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{\ac{TS}}, innentől, az eredeti publikációt követve csak \acs{TS}, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
 Ebben látszik egy osztott memóriás világbeli szemlélet: minden program és programrészlet, ugyan azt az \ts{}-t látja, és az ezen végzett módosításokon keresztül tudnak adatot átadni egymásnak.
 Az osztott memória azonban sok extra munkát és odafigyelést igényel a programozó részéről.
 Biztosítani kell, hogy az adott memóriaterületek írása/olvasása megfelelően legyen szinkronizálva a különböző számítási folyamatok közül: a gyakran előforduló problémák közül az egyik leggyakoribbak a versenyhelyzetek ({\selectlanguage{english}race condition}) és a pattok ({\selectlanguage{english}deadlock}), amelyek mindegyike a nem megfelelő zárolásból adódik a program \un{} kritikus szekcióiban.
@@ -151,8 +151,8 @@ Emellett kitér azokra a dolgokra, amiket változtatni kellett az előzőekben l
 
 \subsection{A felhasznált eszközök}\label{subsec:tools}
 
-Mivel a feladat fontos része, hogy hordozható és modern eszközök kerüljenek felhasználásra, így a megvalósítás C++-al, ezen belül is a 2020-ban kiadott szabványnak megfelelő verzióval történt (ISO/IEC 14882:2020).
-Ezen Linda megvalósítás egy statikus könyvtárrá fordul, amely magában hordoz minden Lindához szükséges extra függőséget, használatához pusztán ezt a könyvtárat kell linkelni a programhoz.
+Mivel a feladat fontos része, hogy modern és hordozható eszközök kerüljenek felhasználásra, így a megvalósítás C++-al, ezen belül is a 2020-ban kiadott szabványnak megfelelő verzióval történt (ISO/IEC 14882:2020).
+Ezen Linda megvalósítás egy statikus könyvtárrá fordul, amely magában hordoz minden szükséges extra függőséget, használatához pusztán ezt a könyvtárat kell linkelni a programhoz.
 A fordítás Clang ($17.0.3$) és MSVC ($19.40.33807$) fordítókkal működik és ezen fordítók adott verzióikkal lett tesztelve.
 
 A többszálúság megvalósítására a C++ által biztosított szálkezelési primitívek kerültek felhasználásra, így ehhez nincs szükség külső könyvtárra.
@@ -215,7 +215,7 @@ Sajnos, teljes kompatibilitás még a makrók felhasználásával sem megoldhat�
 A sablonokkal ellentétben azonban, az előfeldolgozó képes arra, hogy ha a függvényhívásnál a függvény is külön zárójellel van körbefogva (pl.\ \texttt{(fv)(1, 2)}), akkor ezt a konstrukciót a függvény nevét tartalmazó sztringre, a függvényre mutató mutatóra és a paraméterek listájára bontsa szét.
 
 % TODO LUT
-Ezekből az adatokból megkonstruálható egy globális {\selectlanguage{english}LUT}, amelyik az egyes függvények neveihez rendeli a függvénymutatókat.
+Ezekből az adatokból megkonstruálható egy globális {\selectlanguage{english}\ac{LUT}}, amelyik az egyes függvények neveihez rendeli a függvénymutatókat.
 Ha ezt a program futásának elején, statikus inicializálókkal valósítjuk meg, figyelve, hogy a globális statikus változók nem specifikált inicializálási sorrendje ne okozzon problémát, akkor a program bármely futó folyamata rendelkezik a számára helyes sztring--függvénymutató összerendelésekkel.
 
 \begin{figure}[hbt!]
@@ -245,10 +245,10 @@ in("result", ldb::ref(&x));
 \subsection{Átfogó architektúra}\label{subsec:lrt-arch}
 
 A megvalósítás alapvetően egy MPI alapú párhuzamos rendszer.
-% TODO wtf if MPI
+Ez lehetővé teszi, több folyamat induljon el egy számítás végrehajtására, majd hogy ezek címzett üzeneteket küldjenek egymásnak.
 Minden MPI processz, saját magába foglal egy végrehajtó egységet, amely a különböző Linda \lcmd{eval} által indított folyamatokat futtatja.
 Emellett található egy külön folyamatban elhelyezkedő adatbázis rendszer, amelyik a \ts{} feladatát látja el.
-Erről ad \aref{fig:linda-arch}.~ábra áttekintést, amelyen 3 MPI processz közötti lehetséges kommunikációt szemléltet egy UML kommunikációs diagramot felhasználva.
+Erről ad \aref{fig:linda-arch}.~ábra áttekintést, amelyen 3 MPI processz közötti lehetséges kommunikációt szemléltet egy \ac{UML} kommunikációs diagramot felhasználva.
 A zölddel jelölt lifeline--ok az MPI kommunikátor részei, míg a kék szín a PostgreSQL folyamatban elhelyezkedő elemei a rendszernek.
 Látható, hogy az \lcmd{eval} üzenetek a különböző processzek között direkt kerülnek eloszlásra, míg a primitív adat írás/olvasás műveletek egyenesen a postgres folyamat felé kerülnek irányításra.
 
@@ -264,7 +264,7 @@ Az előzőekben már olvasható módon, egy processz egy magában teljes számí
 Ehhez az architektúrához természetesen illeszkedik az MPI processzek egyenrangúsága, és hogy alapvetően minden processz ugyanazt a kódot kezdi el futtatni.
 A Linda rendszer ezt jelentősen nem módosítja, az indított kód tényleg azonos a processzek között, egy apró különbséggel.
 
-A $0.$ processz egy speciális feladatot hajt végre, az szolgál a párhuzamos végrehajtás soros kezdőpontjaként.
+A $0$ azonosítójú processz egy speciális feladatot hajt végre, az szolgál a párhuzamos végrehajtás soros kezdőpontjaként.
 Mivel a Linda program egy soros belépési pontnál indul, ezért az indításakor még nem fut semmi párhuzamosan, elméletben még az is lehetséges lenne az általános nyelvi elvek szerint, hogy nem is léteznek a folyamatok, amelyeken az \lcmd{eval} kiértékelések történnek.
 Hogy ezt lehetővé tegye a megvalósítás, az MPI ellentétes viselkedése ellenére, a belépési pontot csak specifikusan a $0.$ processz futtatja, és a többi pedig várakozik arra, hogy az lefusson, amivel a teljes program végét jelzi.
 Megjegyzendő, hogy ez nem zárja ki egyéb \lcmd{eval} parancsok végrehajtásától, a többszálú végrehajtásnak köszönhetően ezek egyszerre történhetnek egy MPI processzen.
@@ -289,7 +289,8 @@ A szerveren ilyenkor lefutó folyamatokról \aref{subsec:the-lts}.~szekcióban t
 
 \subsubsection{Sorosítás}\label{subsubsec:serial}
 
-Az MPI környezet biztosít a fejlesztők számára eszközöket, amelyeket felhasználva saját típusok hozhatóak létre annak érdekében, hogy hatékonyabban lehessen nem primitív típusokat tartalmazó üzeneteket küldeni.
+Az MPI környezet lehetővé teszi a fejlesztők számára, hogy saját típusokat hozzanak létre.
+Ez elsődlegesen hatékonysági célt szolgál, hiszen lehetővé teszi az MPI számára, hogy nem primitív típusokat tartalmazó üzeneteket másolás nélkül elküldjön.
 Az alapötlet, hogy ezt felhasználva lehetséges megadni egy olyan leírást az MPI megvalósításnak, hogy az másolás nélkül ki tudja olvasni egy memóriapufferből az elküldendő adatokat.
 Bár ez egy hatékonyságot jelentősen növelő és hasznos lehetőség, sajnos a jelenlegi célokra nem használható ki.
 A Linda rendszer típusok szintjén mutatott dinamikusságát már nem tudja lekövetni: dinamikus hosszúságú tömbök (Linda \nes{}), amelyek egyesével lehetnek különböző típusúak és méretűek, ráadásul ezen mezők között is lehet olyan, amelyik dinamikus hosszúságú (sztring mező), de még rekurzívan másik \nes{}t tartalmazó is (függvényhívás jelölő).
@@ -328,7 +329,7 @@ Ezt a jelenlegi megvalósítás, az előzőekben már olvasható módon, a Postg
 
 A PostgreSQL támogatja, hogy saját szerveroldali bővítményt valósítsunk meg, amelyben teljesen saját SQL--ből használható függvényeket lehet definiálni, sok különböző támogatott nyelvet felhasználva, például (alapból beépítve) PL/pgSQL, Perl, Tcl vagy Python.
 Ezektől függetlenül egy C interfész is elérhető, amelyet az interpretált nyelvek is használnak; de lehetőségünk van nekünk is ezt használni.
-Ezt a lehetőséget és hogy pár függvény felhasználásával lehetséges saját típust definiálni használja ki a Linda \ts{}, és C ABI--nak megfelelő interfészen keresztül ad egy C++ megvalósítást a szükséges függvényekre.
+Ezt a lehetőséget és hogy pár függvény felhasználásával lehetséges saját típust definiálni használja ki a Linda \ts{}, és a C \ac{ABI} elvárásainak megfelelő interfészen keresztül ad egy C++ megvalósítást a szükséges függvényekre.
 %Ezt a lehetőséget összeszinkronizálva a saját típusok megvalósításának biztosításával, amelyhez pusztán pár függvény definiálására van szükség, elérhető, hogy egy teljesen saját típust lehessen létrehozni egy szerver oldali bővítményben vagy C--ben, vagy bármely olyan nyelven, amelyik képes a C ABI--nak megfelelő szimbólumokat definiálni egy dinamikus könyvtárban (SO, DLL).
 %Mivel C++--al került megvalósításra a többi kódrészlet, így ez a bővítmény is C++--ban lett megírva, pár C nyelvű szimbólumot publikussá téve a könyvtárban.
 
@@ -356,7 +357,7 @@ Ha ezt nem tenné az adatbázis és karakterenként tároljuk el egy 64--bites s
 Ami jelentősebb probléma azonban, hiszen a \hbox{diszk/memória} relatíve olcsó, hogy az adatokat össze is kell hasonlítani.
 Két szám esetén (szómérettől függően) nagyságrendileg egy 1-2 skalár utasítással megadható azoknak a relációja.
 Szövegként tárolt értékek esetén viszont minden karaktert egyesével kell összehasonlítani, esetleg vektorizálással kell gyorsítani azt.
-Ez minden esetben jelentősen több munka, mint egy egyszerű összehasonlító utasítás lefuttatása, nem is számolva a manuális SIMD kód kimagaslóan ,,jó'' karbantarthatóságával.
+Ez minden esetben jelentősen több munka, mint egy egyszerű összehasonlító utasítás lefuttatása, nem is számolva a manuális \ac{SIMD} kód kimagaslóan ,,jó'' karbantarthatóságával.
 
 Ezeknek a típusoknak a megvalósításához kellett megírni azokat a függvényeket, amelyek egy sztring reprezentációból a konkrét típusra konvertálják az értéket.
 Így szükségszerű megadni egy sztring reprezentációt, ami egyértelműen meghatároz egy Linda értéket, és annak típusát.

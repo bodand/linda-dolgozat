@@ -59,7 +59,6 @@
 
 % Table of Contents
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\setcounter{tocdepth}{2}
 \tableofcontents\vfill
 
 
@@ -106,6 +105,25 @@
 \listoffigures\addcontentsline{toc}{chapter}{\listfigurename}
 %\listoftables\addcontentsline{toc}{chapter}{\listtablename}
 
+\chapter*{Rövidítésjegyzék}
+\addcontentsline{toc}{chapter}{Rövidítésjegyzék}
+
+\begin{acronym}
+	\setlength{\parskip}{-5ex}
+	\setlength{\itemsep}{2ex}
+	\acro{ABI}{application binary interface}
+	\acro{CSP}{communicating sequential processes}
+	\acro{CISC}{complex instruction set computer}
+	\acro{HPC}{high-performance computing}
+	\acro{ISA}{instruction set architecture}
+	\acro{LUT}{lookup table}
+	\acro{MPI}{Message Passing Interface}
+	\acro{RISC}{reduced instruction set computer}
+	\acro{TS}{tuple--space}
+	\acro{SIMD}{single instruction multiple data}
+	\acro{UML}{Unified Modeling Language}
+	\acro{VLSI}{very large scale integration}
+\end{acronym}
 
 % Bibliography
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

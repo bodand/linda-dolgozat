@@ -26,7 +26,7 @@ Az alábbi táblázat tartalmazza a jelenlegi Linda megvalósítás által bizto
         \texttt{std::uint16\_t} & 16--bites előjel nélküli egész & $1$ & A szám értéke \\\hline
         \texttt{std::int32\_t} & 32--bites előjeles egész & $2$ & A szám értéke \\\hline
         \texttt{std::uint32\_t} & 32--bites előjel nélküli egész & $3$ & A szám értéke \\\hline
-        \texttt{std::string} & sztring & $4$ & A sztring bájtjainak száma (64--biten előjel nélkül), majd annak bájtjai \\\hline
+        \texttt{std::string} & sztring & $4$ & A sztring bájtjainak száma (64--biten előjel nélkül), majd a sztring bájtjai \\\hline
         \texttt{ldb::lv::fn\_call} & függvényhívás & $5$ & A függvény neve mint sztring, majd rekurzívan \nes{}ként a paraméterei \\\hline
         \texttt{std::int64\_t} & 64--bites előjeles egész & $6$ & A szám értéke \\\hline
         \texttt{std::uint64\_t} & 64--bites előjel nélküli egész & $7$ & A szám értéke \\\hline
@@ -34,11 +34,11 @@ Az alábbi táblázat tartalmazza a jelenlegi Linda megvalósítás által bizto
         \texttt{double} & kétszeres lebegőpontos szám & $9$ & A szám értéke \\\hline
         \texttt{ldb::lv::type\_ref} & típus referencia & $A$ & A hivatkozott típus kódja 8--biten \\\hline
     \end{tabularx}
-    \caption{A típusok sorosítási értékei}
+    \caption{A Linda típusok és sorosítási értékeik}
     \label{tbl:type-serial}
 \end{table}
 
-\section{Megoldások}
+\clearpage\section{Megoldások}
 
 \subsection{Csatorna alapú kommunikáció}\label{x:subsec:sln-csp}
 
