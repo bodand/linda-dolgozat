@@ -162,7 +162,7 @@ Az alábbi táblázat tartalmazza a jelenlegi Linda megvalósítás által bizto
 		int current = 0;
 		in("__SEM_STATE", sem_handle, ldb::ref(&current));
 		while (current == 0) {
-			// clear previously set signal on the mutex
+			// clear previously set signal on the semaphore
 			inp("__SEM_SIGNAL", sem_handle);
 			out("__SEM_STATE", sem_handle, 0);
 			in("__SEM_SIGNAL", sem_handle);
