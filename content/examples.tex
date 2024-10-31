@@ -7,8 +7,8 @@ Ezt felhasználva ebben a fejezetben olyan példák kerülnek bemutatásra, amel
 
 \section{Oktatási példák}
 
-A következőkben találhatóak olyan leírások, amelyek különböző párhuzamos programozási eszközök és technikák használatát mutatják röviden be, majd egy konkrét feladat kiírás, amelyiknek a megoldásának általános leírása a bemutatott technikát használja.
-Egyes helyeken a teljes megoldás kódja meg van adva.
+A következőkben találhatóak olyan leírások, amelyek különböző párhuzamos programozási eszközök és technikák használatát mutatják röviden be, majd egy konkrét feladatkiírás, amelyiknek a megoldásának általános leírása a bemutatott technikát használja.
+Egyes helyeken a teljes megoldás kódja feltüntettem.
 
 \subsection{Csatorna alapú kommunikáció}
 
@@ -23,112 +23,14 @@ Ez belátható a \ts{} olyan módú felhasználásával, ahol egy adatszerkezetn
 
 \begin{sln}\label{sln:csp-ch-buf}
     Az alábbi megoldás egy 1 elemű pufferelt csatornát valósít meg. Elkülöníti a csatornákkal kapcsolatos műveleteket a \texttt{make\_channel}, \texttt{enq\_msg} és \texttt{deq\_msg} függvényekbe.
-
-    \begin{lstlisting}[label=lst:ex-csp-buf, caption={Példa a Linda alatt megvalósított CSP csatornákra (1)},gobble=8,language=C,numbers=left,gobble=8]
-        using channel_t = std::string_view;
-
-        channel_t
-        make_channel(std::string_view channel) {
-            out(channel);
-            return channel;
-        }
-
-        void
-        enq_msg(channel_t channel, std::string x) { // itt string, de általánosítható
-            in(channel);
-            out(channel, x);
-        }
-
-        int
-        deq_msg(channel_t channel) {
-            int val;
-            in(channel, ldb::ref(&val));
-            out(channel);
-            return val;
-        }
-
-        int
-        read_file(channel_t outch, std::string n) {
-            std::istream fin(path);
-            std::string data;
-            while (std::getline(fin, data)) {
-                enq_msg(outch, data);
-            }
-            enq_msg(outch, ""); // empty string marks EOF
-            return 0;
-        }
-
-        int
-        real_main(int argc, char** argv) {
-            const auto ch = make_channel("file-data");
-
-            int inputs = argc - 1; // feltéve helyes bemenetet
-            for (int i = 1; i < argc; ++i) {
-                eval(i, (read_file)(ch, argv[i]));
-            }
-
-            std::uint64_t words = 0;
-            std::uint64_t lines = 0;
-            std::uint64_t chars = 0;
-            for (;;) {
-                const auto next = deq_msg(ch);
-                if (next.empty()) {
-                    if (inputs == 1) break; // end if all files finished
-                    --inputs;
-                    continue;
-                }
-                words += count_words(next);
-                ++lines;
-                chars += next.size();
-            }
-            std::cout << words << ' ' << lines << ' ' << chars << '\n';
-            for (int i = 1; i < argc; ++i) {
-                in(i, 0);
-            }
-            return 0;
-        }
-    \end{lstlisting}
+    A megoldáshoz tartozó kódrészlet megtalálható \aref{x:subsec:sln-csp}.~szakaszban.
 \end{sln}
 
 \begin{sln}\label{sln:csp-ch-unbuf}
     Az alábbi megoldás egy nem pufferelt csatornát valósít meg.
     A biztosított függvények azonosak \aref{sln:csp-ch-buf}.~megoldásban leírtakkal, ezek azonban nem várakoznak a csatornára írás esetén, hanem mindig ,,elküldik'' az üzenetet.
     Hasonlóan, a \texttt{real\_main} és \texttt{read\_file} függvények megegyeznek \aref{sln:csp-ch-buf}.~megoldásbelivel, így itt nem kerültek reprodukálásra.
-
-    \begin{lstlisting}[label=lst:ex-csp-unbuf, caption={Példa a Linda alatt megvalósított CSP csatornákra (2)},gobble=8,language=c,numbers=left,gobble=8]
-        using channel_t = std::string_view;
-
-        channel_t
-        make_channel(std::string_view channel) {
-            out("_CNTR", channel, 0U);
-            out("_READ", channel, 0U);
-            return channel;
-        }
-
-        void
-        enq_msg(channel_t channel, std::string x) { // itt string, de általánosítható
-            unsigned cntr;
-            in("_CNTR", channel, ldb::ref(&cntr));
-            out(channel, cntr, x);
-            out("_CNTR", channel, cntr++);
-        }
-
-        std::string
-        deq_msg(channel_t channel) {
-            unsigned read;
-            in("_READ", channel, ldb::ref(&read));
-            std::string val;
-            in(channel, read++, ldb::ref(&val));
-            out("_READ", channel, read);
-            return val;
-        }
-
-        int
-        read_file(channel_t outch, std::string path) { ... }
-
-        int
-        real_main(int, char**) { ... }
-    \end{lstlisting}
+    A kódrészlet itt is \aref{x:subsec:sln-csp}.~szekcióban található: \aref{lst:ex-csp-unbuf}.~listázás.
 \end{sln}
 
 \subsection{Scatter--Gather idióma}
@@ -138,7 +40,7 @@ Ezzel megvalósítható hogy egy alapból nagy adathalmazon lehessen valami olya
 Egy általános ábra látható \aref{fig:scatter-gather}.~ábrán, ahol a scatter művelet a fentről lefele mutató piros (root folyamatból szétszóró) nyilak, a gather pedig az ellentétes irányú kékek.
 
 \begin{figure}[htb]
-    \resizebox{\linewidth}{!}{\includegraphics{figures/scatter-gather.pdf}}
+    \centerline{\resizebox{9cm}{!}{\includegraphics{figures/scatter-gather.pdf}}}
     \caption{A scatter és gather műveletek}
     \label{fig:scatter-gather}
 \end{figure}
@@ -168,70 +70,38 @@ A gyakori megvalósításban $n = 1$, ilyen például egy \texttt{std::mutex}: e
 
 Ennek elsődlegesen osztott memóriás párhuzamosítási modellekben van értelme, mint egy adott processzen belüli több--szálasítás.
 Mivelhogy ha egy adott memóriablokkot valamilyen módon módosítani szeretnénk, akkor problémákat okoz, ha valamilyen másik kódrészlet azt velünk párhuzamosan szintén módosítja.
-A szemaforok tulajdonsága, hogy atomivá tehető több egyesével atomi művelet egymásutánja, ami alapól nem lenne az.
+A szemaforok tulajdonsága, hogy atomivá tehető több művelet egymásutánja, ami alapól nem lenne az.
 
 \begin{xrcs}
     Hozzon létre egy Linda alapú szemafort, amelyik képes egy adott kódrészletre garantálni, hogy egyszerre csak $n$ folyamat futtatja le!
-    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
+    A szemaforok zárolására és felengedésére legyen egy--egy függvény, illetve legalább egy ,,konstruktor'' függvény, amelyik beállítja adott szemaforra $n$ értékét.
+%    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
     Ha tudja, próbálja megvalósítani aktív várakozás (spin lock) nélkül.
 
-    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
-        int
-        work(int sem) {
-            acquire_lsemaphore(sem);
-            // .. critical section ..
-            release_lsemaphore(sem);
-        }
-
-        int
-        real_main(int, char**) {
-            int sem_handle = new_lsemaphore(3);
-            for (int i = 0; i < 12; ++i) {
-                eval("worker", i, (work)(sem_handle));
-            }
-            wait_workers();
-            return 0;
-        }
-    \end{lstlisting}
+%    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
+%        int
+%        work(int sem) {
+%            acquire_lsemaphore(sem);
+%            // .. critical section ..
+%            release_lsemaphore(sem);
+%        }
+%
+%        int
+%        real_main(int, char**) {
+%            int sem_handle = new_lsemaphore(3);
+%            for (int i = 0; i < 12; ++i) {
+%                eval("worker", i, (work)(sem_handle));
+%            }
+%            wait_workers();
+%            return 0;
+%        }
+%    \end{lstlisting}
 \end{xrcs}
 
 \begin{sln}
-    Az alábbi megoldás ahol tud próbálja kihasználni a hatékony várakozás lehetőségét, és nem aktív várakozással kezeli magukat a szemaforokat.
+    Az alábbi megoldás kihasználja a hatékony várakozás lehetőségét, és nem aktív várakozással kezeli magukat a szemaforokat.
     Egy aktívan várakozó szemafor is teljesíti a feladat előírásait és könnyebben átlátható kódot eredményezhet: egy \texttt{inp} egy ciklusban a szemafor foglalásánál jelentősen egyszerűbb, de jóval több TS írást olvasást okoz.
-
-    \begin{lstlisting}[gobble=8,language=C,numbers=left]
-        int
-        new_lsemaphore(int with_max = 1) {
-            int last = 0;
-            inp("__SEM_CNTR", ldb::ref(&last)); // stays 0 if lookup fails (i.e. first call)
-
-            int current = last + 1;
-            out("__SEM_CNTR", current);
-            out("__SEM_STATE", current, with_max);
-            return current;
-        }
-
-        void
-        acquire_lsemaphore(int sem_handle) {
-            int current = 0;
-            in("__SEM_STATE", sem_handle, ldb::ref(&current));
-            while (current == 0) {
-                while (inp("__SEM_SIGNAL", sem_handle));
-                out("__SEM_STATE", sem_handle, 0);
-                in("__SEM_SIGNAL", sem_handle);
-                in("__SEM_STATE", sem_handle, ldb::ref(&current));
-            }
-            out("__SEM_STATE", sem_handle, current - 1);
-        }
-
-        void
-        release_lsemaphore(int sem_handle) {
-            int current = 0;
-            in("__SEM_STATE", sem_handle, ldb::ref(&current));
-            out("__SEM_STATE", sem_handle, current + 1);
-            out("__SEM_SIGNAL", sem_handle);
-        }
-    \end{lstlisting}
+    A kód \aref{x:subsec:sln-semaphore}.~szekcióban olvasható.
 \end{sln}
 
 \section{Párhuzamos fordítás}
@@ -242,21 +112,18 @@ Az egyik legjobb példa erre a jelenségre, ami nyílt forráskódú projekt, az
 
 A modern informatikában használt nyelvek saját eszközeik rendelkeznek a megfelelő infrastruktúrával, hogy ezt a problémát különböző megoldásokkal orvosolni próbálják a nyelv ökoszisztémájába illeszthető módon.
 A gyakori esetekben a lokális gépen található, előző fordítások során már előállított félkész fordítási melléktermékek újrafelhasználásán keresztül megvalósított \un inkrementális fordítás, és párhuzamosítás a biztosított megoldás.
-A demó programban az utóbbit valósítom meg, bár egyszerűen megoldható az inkrementális rendszer elkészítése is a jelenlegi kódba.
+A demó programban az utóbbit valósítom meg, bár egyszerűen megoldható az inkrementális rendszer beépítése is a jelenlegi kódba.
 
-% TODO cite make(1), ninja
-C és C++ projektek esetében a \textit{de facto} szabvánnyá vált CMake program látja el az általános projektmenedzsment feladatot: a konkrét fordítást kiszervezi egy erre specializált programra (pl. make, ninja), ami számára csak generál egy konfigurációs fájlt, ami alapján dolgozhat.
+C és C++ projektek esetében a \textit{de facto} szabvánnyá vált CMake program látja el az általános projektmenedzsment feladatot: a konkrét fordítást kiszervezi egy erre specializált programra (pl. make, ninja), ami számára generál egy konfigurációs fájlt, ami alapján dolgozhat.
 Mind az inkrementális fordítás, mind a párhuzamosítás ebben a rétegben kerül megvalósításra (CMake futtatásonként mindent újra legenerál, és szigorúan egy szálon fut):
 Például a make eszköz használatával egy C vagy C++ projekt csak akkor hoz létre újra egy objektum fájlt, ha a beállított szabály szerint annak a bemenete megváltozott a fájlrendszer módosítási dátumai alapján.
 A legtöbb make megvalósítás támogat párhuzamosítást is, különféle hatékonysággal.
 A parallel fordítás irányban elindulva azonban találjuk a ninja eszközt, ami az inkrementális fordítás megvalósítására azonos módszert alkalmaz, mint a make, de amelyet úgy hoztak létre, hogy a párhuzamosítást tartották elsősorban szem előtt.
 Ennek megfelelően több esetben a ninja gyorsabb fordítási sebességet biztosít, pusztán a jobban kidolgozott párhuzamosítási alrendszere miatt.
 
-% TODO MPI rövi.
 Ezt az ötletet felhasználva egy Linda alapú megvalósítást is lehetséges készíteni, amelyik a Linda és az alatta található MPI lehetőségeit kihasználva biztosít egy párhuzamosítást kiemelten kihasználó fordító környezetet.
 A megvalósítás a Linda Build kifejezésből az ,,lb'' nevet viseli.
 
-% TODO TS
 Az általános ötlet egyszerű: a fordítandó fájlok listáját feltöltjük a TS--be, amiből a feldolgozó folyamatok az éppen felhasználtat ki tudják venni.
 Az éppen kivett parancsot feldolgozza egy--egy megfelelő műveletet végző folyamat, majd a készített fájlt visszateszi a TS--be, ezzel lehetővé téve más folyamatoknak, hogy az attól a fájltól függő parancsot végrehajtsa. A következőkben ennek részletes, a megalkotott Linda implementációt használó megvalósítása következik.
 
@@ -278,7 +145,7 @@ A párhuzamosság fokát a \texttt{lrt::this\_runtime()} segédfüggvényen kere
 Az így indított folyamatok fogják a tényleges fordítási parancsok meghívását megvalósítani egy általános futtató eljárás meghívásán keresztül.
 Ez a függvény számára érdekes ennesek első értékét, a futtatandó program nevét, az előre betöltendő kapcsolók listáját és a saját azonosítóját kapja meg.
 (Az azonosító csak a hiba--diagnózist és az egy egyedi értékkel való visszatérést teszi könnyen megoldhatóvá, összességében lehagyható lehet.)
-Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtatandó program közötti összerendelés beégetett sztringekként jelennek meg a kódban, de egy tényleges megvalósításban a kód a konfigurációs fájlból kerülnének valamilyen módon kiolvasásra: ez a kód és a konfigurációs fájl nyelvének egyszerűsége miatt elhagyásra került, mivel a párhuzamosítási lépéseket nem befolyásolja.
+Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtatandó program közötti összerendelés beégetett sztringekként jelennek meg a kódban, de egy éles megvalósításban a kód a konfigurációs fájlból kerülnének valamilyen módon kiolvasásra: ez a kód és a konfigurációs fájl nyelvének egyszerűsége miatt elhagyásra került, mivel a párhuzamosítási lépéseket nem befolyásolja.
 
 \begin{lstlisting}[numbers=left, language=C++, label=lst:lb-startworkers, caption={Az fordító folyamatok indítása}]
 int
@@ -338,12 +205,14 @@ LD exec src1.o src2.o src3.o src4.o
 \end{lstlisting}
 
 \begin{figure}[!bt]
-	\center{\resizebox{8cm}{!}{\includegraphics{figures/lb-conf.pdf}}}
+	\center{\resizebox{7cm}{!}{\includegraphics{figures/lb-conf.pdf}}}
 	\caption{A példa projekt vizuális ábrázolása}
 	\label{fig:lb-demo-graphic}
 \end{figure}
 
 \subsection{Eredmények}\label{sub:results}
+
+% TODO szar az egész
 
 Annak érdekében, hogy látható legyen, hogy ezzel a rövid kódrészlettel is lehetséges, jól párhuzamosított kódot megvalósítani, a megvalósított fordító rendszer sebessége egy szintetikus projekt fordításával került lemérésre.
 A méréshez használt ,,projekt'' egyes fájljait egy Perl szkript használatával lehetséges legenerálni, amelyik a projekt C++ forrásai mellé egy ,,\texttt{Makefile}'', ,,\texttt{ninja.build}'' és egy ,,\texttt{lb.build}'' fájlt is generál.
@@ -398,7 +267,7 @@ Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem t
                              ymajorgrids,
                              yminorgrids,
                              xmajorgrids,
-                             width=13cm,
+                             width=10cm,
                              xtick={1,2,4,8,16,24,30,32},
                              ytick={0,25,50,100,150,200,250,300},
                              log ticks with fixed point,

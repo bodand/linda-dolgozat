@@ -5,16 +5,16 @@
 
 \section{Párhuzamos hardver}\label{sec:par-hw}
 
-A számítástechnika fejlődése során a processzorok számítási kapacitásának növelése folyamatos kutatás és fejlesztés témája, mind akadémiai, mind ipari csoportok körében.
-%Ez érthető, hiszen minél gyorsabb, jobb, erősebb egy processzor, annál nagyobb és komplexebb számításokat tudunk végrehajtani, adott időtartam alatt.
+A számítástechnika fejlődése során a processzorok számítási kapacitásának növelése folyamatos kutatás és fejlesztés témája mind akadémiai, mind ipari csoportok körében.
 A soros végrehajtás azonban csak egy adott ideig képes az elvárt számítási gyorsulást elhozni, előbb-utóbb megvalósítási vagy egyszerűen fizikai akadályokba ütközik a fejlődés.
 
 Első megtestesülése ennek problémának akkor adódott, amikor az 1980-as évek elején az addig elterjedten használatos CISC rendszerű processzorok komplexitása miatt, nehézkessé vált azok költséghatékony megvalósítása \cite{patterson_case_1980}.
 Ekkor kezdett a RISC architektúra kibontakozni, és ebben az időben jelentek meg a transzpúterek is.
-Mind két irányzat a komplex processzor architektúrák egyszerűsítését vélte a megfelelő iránynak, amit felhasználva különböző eredményeket próbáltak elérni: költséghatékonyabb megvalósítás, egyszerűbb használat és mindezekhez kisebb méretű assembly instrukció készlet.
+Mind két irányzat a komplex processzor architektúrák egyszerűsítését vélte a megfelelő iránynak, amit felhasználva különböző eredményeket próbáltak elérni: költséghatékonyabb megvalósítás, egyszerűbb használat és mindezekhez kisebb méretű utasításkészlet.
 
-A transzpúterek elsődleges elve, hogy egy chipre sok alapvetően szükséges részét egy számítógépnek ráültessék, és ezzel egy közel saját magukban számításra képes egységeket kapjanak.
+A transzpúterek elsődleges elve, hogy ráültessék sok alapvetően szükséges részét egy számítógépnek egy chipre, és ezzel egy közel saját magukban számításra képes egységeket kapjanak.
 Ez lehetségesé vált az akkoriban megjelenő mikroelektronikai fejlődések segítségével: ún.\ VLSI besorolású integrációs technológia felhasználásával.
+% TODO ezt kicsit átírni, h jobban érthető legyen mi van
 Ennek megfelelően, a kor addigi mikroprocesszorainak nehézkes beágyazhatóságához képest \cite{clark_microprocessor_1978} kiemelkedő módon, egy transzpúter egység használata megvalósítható volt nagy részben a kommunikációs portok illesztésével.
 Ez a gondolatmenet lehetővé tette a transzpúterek számára, hogy könnyedén komponálható legyen más áramkörökkel, beleértve más transzpúter egységeket is.
 Ezt a tulajdonságokat felhasználva pedig könnyen megvalósíthatóvá vált egy nagy párhuzamos számítógép összeállítása az egyes transzpúter elemek összekapcsolásával, ami az egyes egységeket párhuzamos számításra volt képes kihasználni.
@@ -23,10 +23,10 @@ Ezen transzpúterek legelterjedtebb felhasználására a szuperszámítógépek 
 Nagy reményt fűztek az Inmos új H1 és az Intel iWarp rendszereihez, amelyek a jövő transzpúter alapú rendszereit és szupergépeit fogják elhozni~\cite{hey_supercomputing_1990}. A nagy lendület és elképzelések ellenére \cite{top500org_top500_2024} a 2000-es évekre--nagyságrendileg 10 év elteltével a hivatkozott cikkhez képest--a különféle gyártók konkrét RISC rendszerei szinte minden sajátos megvalósítást kiszorítottak a szuperszámítógépekből.
 A RISC gépek sem uralkodtak azonban örökké: az Intel és AMD alapú rendszerek a sok különböző RISC processzor architektúra szinte mindegyikét teljesen eltüntették a szuperszámítógépek területéről, és a mai napig uralkodónak számítanak.
 
-Ez utóbbi folyamat kezdete nagyjából egybe esik a személyi számítógépekben látott processzor párhuzamosítás kezdetével, ahol az IBM PC leszármazott rendszerekben az Intel 8086-os processzorok leszármazottjai számítottak mindig is uralkodó (CISC) ISA-nak.
+Ez utóbbi folyamat kezdete nagyjából egybeesik a személyi számítógépekben látott processzor párhuzamosítás kezdetével, ahol az IBM PC leszármazott rendszerekben az Intel 8086-os processzorok leszármazottjai számítottak mindig is uralkodó (CISC) ISA-nak.
 A 2004-es évre az x86 processzorok órajelfrekvenciájának növelése elérte azt a pontot, ahol már a processzor által termelt hő mennyisége nem volt kezelhető a legtöbb gyakorlati alkalmazási területen.~\cite{national_research_council_future_2011}
 Ennek megfelelően az asztali processzorok órajelfrekvenciájában, amelyik addig a pontig exponenciálisan növekedett, \cite[S.1 ábra]{national_research_council_future_2011} egy sokkal lassabb növekedést lehetett tapasztalni, és a nagy modern CISC gyártók (Intel, AMD) is megállították az addigi kutatásaikat \cite{smith_intel_2004} és elkezdtek a párhuzamos feldolgozás irányába fejleszteni személyi számítógépeken is.
-Azóta, ahogy a futtatott szoftver is egyre jobban kihasználta a párhuzamosítás lehetőségeit, a magszám egyre fontosabbá vált a PC környezetben, annyira, hogy a modern felső kategóriás x86 asztali processzorok akár 16 fizikai maggal is rendelkeznek.
+Azóta, ahogy a futtatott szoftver is egyre jobban kihasználta a párhuzamosítás lehetőségeit, a magszám egyre fontosabbá vált a PC környezetben, annyira, hogy a modern felső kategóriás x86 asztali processzorok akár több tíz fizikai maggal is rendelkeznek.
 
 Látható tehát, hogy egy modern alkalmazásnak úgy kell íródnia, akár HPC, akár egyszerű asztali környezet a megcélzott platform, hogy a hardver lehetőségeinek tényleges kihasználásához az abban rejlő parallelizmust fel kell tudnia használnia.
 Ehhez megfelelő szoftver eszközkészletre van szüksége, különben a hardver párhuzamosítását nem fogja tudni elérni.
@@ -42,7 +42,7 @@ Ezek felhasználása azonban nem teszi lehetővé a párhuzamos hardver teljes k
 Amire szükség van, hogy a programozó által írt kód magas szintjén párhuzamos algoritmusok legyenek megvalósítva, kihasználva a tényleges problémakör lehetőségeit, valamilyen olyan programozási nyelvben, amelyik támogatja, hogy annak végrehajtása több teljesen párhuzamos végrehajtó egységen, tényleg parallel történjen meg.
 Ennek hiányában a tényleges számítás csak általános megoldásokkal, alacsony szinten párhuzamosítható, ami a specializált esetnél jóval rosszabb minőségű párhuzamosítást tud sok esetben elérni.
 A probléma azonban, hogy ezt klasszikus soros nyelvekben igen nehezen lehetséges elérni, és még a mai napig sok extra figyelmet igényel.
-Emiatt a hardver parallelizációja óta a hozzá tartozó szoftver párhuzamosítása is aktív kutatás témája.
+Emiatt a hardver parallelizációja mellett a hozzá tartozó szoftver párhuzamosítása is aktív kutatás témája.
 
 %\subsection{Párhuzamosítási kategóriák}
 %
@@ -83,8 +83,9 @@ Emiatt a hardver parallelizációja óta a hozzá tartozó szoftver párhuzamos�
 \subsection{Transzpúterek, occam és a CSP}
 
 \Aref{sec:par-hw}.~szekcióban említett transzpúterek eredetileg csak egy saját programozási nyelvel rendelkeztek, mielőtt különféle cégek az akkor népszerű soros C, Pascal és Fortran~\cite{hey_supercomputing_1990} nyelvek párhuzamosítható verzióit elkészítették.
-Az összes nyelvnek a célja az volt, hogy magas szintű programkódból tegyék lehetővé a algoritmusok megvalósítását párhuzamos transzpúter hardveren, kihasználva annak tényleges parallelizációs lehetőségeit, manuális transzpúter assembly írása nélkül.
-Kiemelkedik közülük azonban az említett eredetileg a transzpúterekhez készített nyelv, az occam~(\textit{sic})~\cite{sgs-thomson_microelectronics_limited_occam_1995}.
+Az összes nyelvnek a célja az volt, hogy magas szintű programkódból tegyék lehetővé a algoritmusok megvalósítását párhuzamos transzpúter alapú hardveren, kihasználva annak tényleges parallelizációs lehetőségeit, manuális transzpúter instrukciók használata nélkül.
+Kiemelkedik közülük azonban a már említett eredetileg a transzpúterekhez készített nyelv, az occam \cite{sgs-thomson_microelectronics_limited_occam_1995}.
+% TODO CSP!
 Alapvető felépítése C.~A.~R.~Hoare CSP paradigmáján \cite{hoare_communicating_2004} alapul, ami lehetővé teszi számára, hogy a matematikai formalizmus erejét felhasználja egy magas szintű programozási nyelvben.
 Alapvető elve, hogy a különböző folyamatok párhuzamosan futnak és hajtják végre a számításaikat, amikor pedig szükség van valamilyen kommunikációra, akkor egy két folyamat közötti csatornán (channel) keresztül valósítják ezt meg.
 A csatorna biztosítja, hogy az egyes résztvevők megfelelően el tudják küldeni az adatot az egyik folyamatból a másikba, anélkül, hogy az megvalósítás alatt található kommunikációval kellene foglalkozni.
@@ -95,9 +96,7 @@ Ennek megfelelően, a CSP modell ternészetesen illeszkedett a hardver által ny
 A transzpúter így el tudta kerülni az osztott memória alapú párhuzamosításból származó nehézségeket, amellyel foglalkozni kell egy algoritmus megvalósítása közben.
 A programozónak nem kell arra figyelnie, hogy a szemaforok (és/vagy mutexek) megfelelően legyenek lezárva és felengedve, hiszen nem kell egyáltalán zárolással foglalkoznia.
 Ezzel a pattok (deadlock) előállítása nehezebbé válik, így jelentősen könnyebbé válik a programozás.
-Emellett egy folyamatban futó programkód egyértelműen, csak az adott csatornákon való kommunikációkban cserél adatot más folyamatokkal, így a kód átláthatósága is jobb, mint egy olyan osztott memóriás rendszernél, ahol egy adott memóriaterület tartalma--külön jelzés nélkül--két olvasása között ,,magától'' változhat.
-
-%Az occam alternatívájaként a későbbiekben jelentek meg párhuzamosított klasszikus programozási nyelvek különféle gyártóktól, mint a Fortran és a C, amelyek lehetővé tették fordításukat párhuzamos transzpúter számítógépekre.
+Emellett egy folyamatban futó programkód egyértelműen, csak az adott csatornákon való kommunikációkban cserél adatot más folyamatokkal, így a kód átláthatósága is jobb, mint egy olyan osztott memóriás rendszernél, ahol egy adott memóriaterület tartalma -- külön jelzés nélkül -- két olvasása között ,,magától'' változhat.
 
 A transzpúter hardver bukásának és a gyakorlatból való eltűnése ellenére az occam által használt CSP modell, az előzőekben felsorolt előnyei miatt a mai napig megjelenik a gyakorlatban, és nagy sikereket ér el.
 Amellett, hogy az MPI, a mai napig egyik legtöbbet használt HPC világbeli párhuzamosítási környezet mellett, a modern és nagy népszerűségnek örvendő~\cite{stack_exchange_inc_technology_2024} Go nyelv is ezen alapuló elvet használ a párhuzamosítás megvalósítására.~\cite{google_frequently_nodate}
@@ -116,4 +115,7 @@ Az általa biztosított nyelvi elemek képesek arra, hogy a CSP--ben leírt egyi
 Azonban sok minden mást is le lehet írni Lindával, amit szimpla CSP--ben nem lehet: például egy CSP--beli programban egy üzenetnek pontosan egy előre ismert fogadója van.
 A Linda lehetőséget ad arra, hogy egy konkrétan nem ismert folyamatnak ,,küldjünk üzenetet'', de arra is, hogy egyszerre több folyamat is lássa és feldolgozhassa, amit küldeni szeretnénk külön köztes lépés nélkül.
 
-A dolgozat célja bemutatni, hogy a Linda modell, ahogy a 1980-as évek végén is egy kifejezetten jól használható modellnek számított~\cite{carriero_linda_1989}, manapság, a modern eszközök mellett, is nagyszerűen megállja a helyét.
+A dolgozat célja bemutatni, hogy a Linda modell, ahogy a 1980-as évek végén is egy kifejezetten jól használható modellnek számított~\cite{carriero_linda_1989}, manapság a modern eszközök mellett is nagyszerűen megállja a helyét.
+
+% TODO csatorna/taszk modell
+

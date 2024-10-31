@@ -2,19 +2,16 @@
 % !TeX encoding = UTF-8
 \chapter{A Linda nyelv}\label{ch:linda}
 
-%Történelmileg a Linda \acrfull{smp} környezetben való használatra lett kitalálva.
-%Ez azt jelenti, hogy a programot futtató környezetben azonos processzorok vannak összekapcsolva egy közös memória tartományra, amelyet mindegyikük szabadon tud felhasználni.
-%Ennek az architektúrának a lehetőségeit próbálja kiaknázni, és lehetőséget nyújtani a párhuzamosan futtatható programok készítésére, a direkt memóriamanipulációból származó nehézségek elkerülésével.
-
 \section{A nyelv bemutatása}
 
 A Linda nyelv elméleti modellje egy egyszerű de általános lehetőséget biztosít párhuzamos programok megvalósítására.
-Ehhez a célhoz egyszerűségét két dologból nyeríti.
+Ehhez a célhoz egyszerűségét két dologból meríti.
 Egyik, hogy a Linda \index{Linda} csak egy \un koordinációs nyelv \cite{morrison_wiki_2004}, és nem egy teljes értékű programozási nyelv saját magában.
 Így nem még egy megtanulandó új nyelv, ami külön parallel programok készítését teszi lehetővé, hanem pár egyszerű művelet, amelyeket egy $h$ gazdanyelvbe illesztve változtatja azt egy párhuzamos $h$-Linda programozási nyelvvé \cite{ahuja_linda_1986}.
 Ezen megközelítés ereje abban rejlik, hogy a fejlesztés nagy része ismert eszközökkel, megszokott környezetben történhet.
 Hasonlóan látható a sikeressége is, hiszen eredetileg a készítők a C (\textit{C-Linda}) és Fortran (\textit{Fortran-Linda}) programozási nyelvek kiterjesztéseként hozták létre \cite{ahuja_linda_1986}, azonban az évek során sok másik nyelvhez készültek külső fejlesztőktől különböző megvalósítások.
 Ezek között találhatóak több esetben a HPC környezetben klasszikusan előforduló nyelveken kívül, elsősorban nagyvállalati kontextusban használt nyelvek is; ilyenek többek közt a Java \cite{sun_microsystems_javaspaces_2011, lehman_hitting_2001}, de még szkript nyelvekhez, mint például a Ruby, is készültek implementációk \cite[Part 3 -- Rinda]{seki_druby_nodate}.
+% TODO PyLinda
 
 A másik kulcsa az egyszerűségnek, hogy az előzőekben leírt gazdanyelv kiegészítéséhez pusztán hat műveletet vagy szabad függvényt ({\selectlanguage{english}free function}) használ fel.
 Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{tuple--space}, innentől, az eredeti publikációt követve: \ts, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
@@ -23,7 +20,7 @@ Az osztott memória azonban sok extra munkát és odafigyelést igényel a progr
 Biztosítani kell, hogy az adott memóriaterületek írása/olvasása megfelelően legyen szinkronizálva a különböző számítási folyamatok közül: a gyakran előforduló problémák közül az egyik leggyakoribbak a versenyhelyzetek ({\selectlanguage{english}race condition}) és a pattok ({\selectlanguage{english}deadlock}), amelyek mindegyike a nem megfelelő zárolásból adódik a program \un{} kritikus szekcióiban.
 A Linda által adott megoldás ezeket elfedi a programozó elől, hiszen a konkrét osztott erőforráson végezhető műveletek atomi utasításokként viselkednek, így a zárolás automatikusan megvalósul egy--egy adatelem felett.
 
-Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének került bevezetésre. Ennek a pontos definiáláshoz azonban először szükség van pár alap építő elemre a Linda eszköztárban:
+Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének került bevezetésre. Ennek a pontos definiáláshoz azonban először szükség van pár alap építőelemre a Linda eszköztárban:
 
 \begin{defn}[Linda típus]\label{def:linda-type}\index{Linda típus}
     Azon típusok halmaza, amelyeket a Linda rendszer képes megfelelően kezelni.
@@ -54,11 +51,11 @@ Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének kerü
 
 A Linda \ts{} definíciója említi, hogy módosítható és lekérdezhető halmazként viselkedik.
 Azonban, a tárolt értékek mellett, a konkrét műveletek, amiket végrehajthatunk a halmazon, sem szabadon választhatóak: csak Linda műveletekkel lehetséges minden interakció a \ts--el.
-Itt jelenik meg a szekció elején említett pár egyszerű művelet, amelyet a Linda beilleszt egy választott gazdanyelvbe, hogy azt párhuzamos programozási nyelvvé változtassa. Ezek definiciója látható \aref{def:linda-cmd}.~definícióban.
+Ezek azok a szekció elején említett egyszerű műveletek, amelyeket a Linda beilleszt egy választott gazdanyelvbe, hogy azt párhuzamos programozási nyelvvé változtassa. Ezek definíciója látható \aref{def:linda-cmd}.~definícióban.
 
 \begin{figure}[b!]
     \centering
-    \resizebox{\linewidth}{!}{\includegraphics{figures/linda-in.pdf}}
+    \resizebox{10cm}{!}{\includegraphics{figures/linda-in.pdf}}
     \caption{A Linda \lcmd{in} és \lcmd{inp} művelet}
     \label{fig:linda-in}
 \end{figure}
@@ -69,22 +66,22 @@ Itt jelenik meg a szekció elején említett pár egyszerű művelet, amelyet a 
         \item[\lcmd{in}($tuple\dots$)]
         \index{Linda parancs!in}
         Beolvassa és kitörli \ats{}--ből azt az \nes{} értéket, amelyik megfelel a paraméterként megadott \nes{}nek.
-        Ha nem talál ilyen \nes{}t \ats{}--ben, akkor addig várakozik, ameddig egy megfelelő érték nem kerül beszúrásra.
+        Ha nem talál ilyen \nes{}t \ats{}--ben, akkor addig várakozik, ameddig egy megfelelő érték meg nem jelenik a \ts{}--ben.
 
         \item[\lcmd{inp}($tuple\dots$)]
         \index{Linda parancs!inp}
         A \lcmd{in} parancs nem blokkoló változata; beolvassa és kitörli azt az \nes{} értéket, amelyik megfelel a megadott \nes{} paraméternek.
-        Ha nem talál ilyet, akkor hamis értékkel tér vissza, és nem hajt végre semmilyen műveletet.
+        Ha nem talál ilyet, akkor hamis értékkel tér vissza, és nem módosítja a \ts--t.
 
         \item[\lcmd{rd}($tuple\dots$)]
         \index{Linda parancs!rd}
         Beolvassa, de nem törli ki \ats{}--ből azt az \nes{}t, amelyik megfelel a paraméter \nes{}nek.
-        Ha nem talál ilyen \nes{}t \ats{}--ben, akkor addig várakozik, ameddig egy megfelelő érték nem kerül beszúrásra.
+        Ha nem talál ilyen \nes{}t \ats{}--ben, akkor addig várakozik, ameddig egy megfelelő érték meg nem jelenik a \ts--ben.
 
         \item[\lcmd{rdp}($tuple\dots$)]
         \index{Linda parancs!rdp}
         Az \lcmd{rd} parancs nem blokkoló változata; beolvassa, de nem törli ki \ats{}--ből azt az \nes{}t, amelyik megfelel a paraméter \nes{}nek.
-        Ha nem talál ilyet, akkor hamis értékkel tér vissza, és nem hajt végre semmilyen műveletet.
+        Ha nem talál ilyet, akkor hamis értékkel tér vissza.
 
         \item[\lcmd{out}($tuple\dots$)]
         \index{Linda parancs!out}
@@ -102,12 +99,12 @@ Itt jelenik meg a szekció elején említett pár egyszerű művelet, amelyet a 
 Az műveletek megadásában található $tuple...$, egyes Linda értékekkel megadott Linda \nes{}, hozzá véve még \aref{subsec:qm-op}.~szekcióban ismertetett lehetőséget.
 Az \lcmd{eval}-ban látható $tuple^*...$ paraméter értelmezésére a következőkben fog szó esni \aref{subsec:eval-fn}.~szekcióban.
 
-Míg az \lcmd{out} működése egyszerű és egyértelmű, az \lcmd{in(p)} és \lcmd{rd(p)} függvényekhez tartoznak a megértést segítő \ref{fig:linda-in}.\ és \ref{fig:linda-rd}.~ábrák.
+Míg az \lcmd{out} működése egyszerű és egyértelmű, az \lcmd{in(p)} és \lcmd{rd(p)} függvények megértését segítik \aref{fig:linda-in}.\ és \aref{fig:linda-rd}.~ábrák.
 Ezeken a TS módosulása az \lcmd{in} esetében, és az általános egyszer mintaillesztés szerinti keresési viselkedés látható: az \lcmd{in} művelet utáni újbóli olvasás \lcmd{inp} segítségével már sikertelen olvasást eredményez, mert az \lcmd{in} azt kivette a TS--ből, amikor megtalálta.
 Ugyan ez \lcmd{rd} esetén nem jelentkezik, ott bennmarad a TS--ben a megtalált ennes.
 
-\begin{figure}[htb]
-    \resizebox{\linewidth}{!}{\includegraphics{figures/linda-rd.pdf}}
+\begin{figure}[thb]
+    \centerline{\resizebox{10cm}{!}{\includegraphics{figures/linda-rd.pdf}}}
     \caption{A Linda \lcmd{rd} és \lcmd{rdp} művelet}
     \label{fig:linda-rd}
 \end{figure}
@@ -122,14 +119,14 @@ Egy változót felhasználva a ?--operátorral lehetséges általánosabb keres�
 Az alapvető művelet az adatot tároló mezők kimásolása után történik meg, pl. az \lcmd{in} művelet esetén a törlés \ats{}--ből.
 
 \begin{figure}[htb]
-    \centerline{\resizebox{.75\linewidth}{!}{\includegraphics{figures/query.pdf}}}
+    \centerline{\resizebox{9cm}{!}{\includegraphics{figures/query.pdf}}}
     \caption{A paraméterezett keresés}
     \label{fig:query}
 \end{figure}
 
 \subsection{Az \lcmd{eval} függvény} \label{subsec:eval-fn}
 
-Az \lcmd{eval} egy speciális függvény, miszerint a paramétereként megadott függvények, a $tuple^*...$ paraméterlistában nem helyileg kerülnek kiértékelésre, hanem egy új--de legalább egy már futó és különböző--folyamatban fognak lefutni, amelyből elérhető számukra a jelenlegi folyamathoz is tartozó Linda \ts{}.
+Az \lcmd{eval} egy speciális függvény, miszerint a paramétereként megadott függvények, a $tuple^*...$ paraméterlistában nem helyileg kerülnek kiértékelésre, hanem egy új -- de legalább egy már futó és különböző -- folyamatban fognak lefutni, amelyből elérhető számukra a jelenlegi folyamathoz is tartozó Linda \ts{}.
 Az így elindított részprogramok lefutását nem várja meg az indító kódrészlet, amint elindításra kerültek, folytatja futását.
 Amikor minden függvény kiértékelésre került, az esetleges nem függvényként megadott konkrét Linda értékek és a lefutott függvények visszatérési értékei (amelyekről elvárt, hogy Linda értékek legyenek) listájából képzett Linda \nes{} beszúródik a Linda \ts{}--be, mintha az egyszerűen egy \lcmd{out} művelettel került volna bele.
 
@@ -193,15 +190,16 @@ Arról, hogy ezeket a lehetőségeket hogy használja ki a megvalósítás, töb
 
 \subsection{Eltérések a modelltől}\label{subsec:diff-to-ideal}
 
+% TODO fogalm.
 A jelenlegi megvalósítás próbálkozik, hogy a lehető legközelebb maradjon a bemutatott elméleti Linda modellhez.
 Azonban két helyen ezt a teljes illeszkedést nem sikerült tartani, a használt gazdanyelv rugalmatlanságából adódóan.
 
-Az első a ?--operátor, ahogy \aref{subsec:qm-op}.~szekcióban be lett mutatva, sajnos nem megvalósítható C++ nyelven.
+Az első a ?--operátor, ahogy \aref{subsec:qm-op}.~szekcióban bemutattam, sajnos nem megvalósítható C++ nyelven.
 Mivel ez magában nem egy létező C++ operátor, amit túl lehetne terhelni, új operátorok felvételét pedig a nyelv nem támogatja.
-A legközelebbi szintaktikával a \texttt{?:}, avagy a feltételes operátor, rendelkezik hiszen ez tartalmazza egyedül a kérdőjel karaktert, viszont ennek elválaszthatatlan párja a kettőspont.
+A legközelebbi szintaktikával a \texttt{?:}, avagy a feltételes operátor rendelkezik hiszen ez tartalmazza egyedül a kérdőjel karaktert, viszont ennek elválaszthatatlan párja a kettőspont.
 Ugyanakkor, ha valahogyan még meg is lehetne oldani, valamiféle rafinált előfeldolgozási lépésekkel, hogy kettőspontok a kód megfelelő részeire bekerüljenek, akkor is szembesülnénk azzal megoldhatatlan problémával, hogy ezt az operátort nem lehet felüldefiniálni, amivel ez az egész irány zsákutcává változik.
 
-Ezt megoldandó, egy saját megoldás bevezetésére van szükség: ez lett
+Ezt megoldandó, egy saját megoldás bevezetésére mellett döntöttem: ez lett
 az \texttt{ldb::ref}, amelyik egy mutatót vesz át arra a változóra, amelyiket a lekérdezésben szerepeltetni szeretnénk, és készít belőle egy olyan belső típust, amelyik alapján a lekérdezés végrehajtó tudja, hogy egyenlőség illesztéskor, ebbe a mutatóba bele kell írni az illeszkedő \nes{} megfelelő pozíciójú mezőjének értékét.
 Az elnevezése a nyelv szabványos könyvtárában megtalálható \texttt{std::ref} függvényre utal.
 
@@ -210,11 +208,12 @@ A benne szereplő függvények szintaktikája teljesen megegyezik az egyszerű f
 Ennek megfelelően, valahogyan meg kell szakítani a függvényhívást az \lcmd{eval} paraméterlistájában, és átalakítani egy másik folyamatban kiértékelődő, de azonos tartalmú és jelentésű, függvényhívássá.
 
 Ennek a helyzetnek az eredetihez leghűebb megoldásához a C++ makróihoz kell fordulni.
-Ennek oka, hogy már a sablonok szintjén a függvényhívás, mint művelet,
+Ennek oka, hogy a sablonok szintjén a függvényhívás, mint művelet,
 nem állítható vissza egy függvénnyé, amit meghívnak, és egy híváshoz tartozó paraméterhalmazzá.
-Sajnos, teljes azonosság még a makrók felhasználásával sem megoldható, mert az előzőekben említett függvény és paraméterlista kettest nem lehet előállítani egy tényleges függvényhívás szintaktikájából.
+Sajnos, teljes kompatibilitás még a makrók felhasználásával sem megoldható, mert az előzőekben említett függvény és paraméterlista kettest nem lehet előállítani egy tényleges függvényhívás szintaktikájából.
 A sablonokkal ellentétben azonban, az előfeldolgozó képes arra, hogy, ha a függvényhívásnál a függvény is külön zárójellel van körbefogva (pl.\ \texttt{(fv)(1, 2)}), akkor ezt a konstrukciót a függvény nevét tartalmazó sztringre, a függvényre mutató mutatóra és a paraméterek listájára bontsa szét.
 
+% TODO LUT
 Ezekből az adatokból megkonstruálható egy globális {\selectlanguage{english}LUT}, amelyik az egyes függvények neveihez rendeli a függvénymutatókat.
 Ha ezt a program futásának elején, statikus inicializálókkal valósítjuk meg, figyelve, hogy a globális statikus változók nem specifikált inicializálási sorrendje ne okozzon problémát, akkor a program bármely futó folyamata rendelkezik a számára helyes sztring--függvénymutató összerendelésekkel.
 
@@ -242,41 +241,42 @@ in("result", ldb::ref(&x));
     \label{lst:impl-diff}
 \end{figure}
 
-\subsection{Összesített architektúra}\label{subsec:lrt-arch}
+\subsection{Átfogó architektúra}\label{subsec:lrt-arch}
 
 A megvalósítás alapvetően egy MPI alapú párhuzamos rendszer.
-Minden MPI rank, saját magába foglal egy végrehajtó egységet, amely a különböző Linda \lcmd{eval} által indított folyamatokat futtatja.
+% TODO wtf if MPI
+Minden MPI processz, saját magába foglal egy végrehajtó egységet, amely a különböző Linda \lcmd{eval} által indított folyamatokat futtatja.
 Emellett található egy külön folyamatban elhelyezkedő adatbázis rendszer, amelyik a \ts{} feladatát látja el.
-Erről ad \aref{fig:linda-arch}.~ábra áttekintést, amelyen 3 rank közötti lehetséges kommunikációt szemléltet egy UML kommunikációs diagramot felhasználva.
-A zölddel jelölt lifeline--ok az MPI kommunikátor részei, míg a kék szín a PostgreSQL processzben elhelyezkedő elemei a rendszernek.
-Látható, hogy az \lcmd{eval} üzenetek a különböző rankok között direkt kerülnek eloszlásra, míg a primitív adat írás/olvasás műveletek egyenesen a postgres folyamat felé kerülnek irányításra.
+Erről ad \aref{fig:linda-arch}.~ábra áttekintést, amelyen 3 MPI processz közötti lehetséges kommunikációt szemléltet egy UML kommunikációs diagramot felhasználva.
+A zölddel jelölt lifeline--ok az MPI kommunikátor részei, míg a kék szín a PostgreSQL folyamatban elhelyezkedő elemei a rendszernek.
+Látható, hogy az \lcmd{eval} üzenetek a különböző processzek között direkt kerülnek eloszlásra, míg a primitív adat írás/olvasás műveletek egyenesen a postgres folyamat felé kerülnek irányításra.
 
 \begin{figure}[htb]
-    \centerline{\resizebox{\linewidth}{!}{\includegraphics{figures/linda-arch.pdf}}}
+    \centerline{\resizebox{9cm}{!}{\includegraphics{figures/linda-arch.pdf}}}
     \caption{A Linda megvalósítás kommunikációs diagramja}
     \label{fig:linda-arch}
 \end{figure}
 
-\subsection{Egy rank feladata}\label{subsec:ranks}
+\subsection{Egy MPI processz feladata}\label{subsec:ranks}
 
-Az előzőekben már olvasható módon, egy rank egy magában teljes számítási egységként viselkedik a globális számítás egy--egy részfeladatát végrehajtva.
-Ehhez az architektúrához természetesen illeszkedik az MPI rankok egyenrangúsága, és hogy alapvetően minden rank ugyan azt a kódot kezdi el futtatni.
-A Linda rendszer ezt jelentősen nem módosítja, az indított kód tényleg azonos a rankok között, egy apró különbséggel.
+Az előzőekben már olvasható módon, egy processz egy magában teljes számítási egységként viselkedik a globális számítás egy--egy részfeladatát végrehajtva.
+Ehhez az architektúrához természetesen illeszkedik az MPI processzek egyenrangúsága, és hogy alapvetően minden processz ugyanazt a kódot kezdi el futtatni.
+A Linda rendszer ezt jelentősen nem módosítja, az indított kód tényleg azonos a processzek között, egy apró különbséggel.
 
-A $0.$ rank egy speciális feladatot hajt végre, ő szolgál a párhuzamos végrehajtás soros kezdőpontjaként.
+A $0.$ processz egy speciális feladatot hajt végre, az szolgál a párhuzamos végrehajtás soros kezdőpontjaként.
 Mivel a Linda program egy soros belépési pontnál indul, ezért az indításakor még nem fut semmi párhuzamosan, elméletben még az is lehetséges lenne az általános nyelvi elvek szerint, hogy nem is léteznek a folyamatok, amelyeken az \lcmd{eval} kiértékelések történnek.
-Hogy ezt lehetővé tegye a megvalósítás, az MPI ellentétes viselkedése ellenére, a belépési pontot csak specifikusan a $0.$ rank futtatja, és a többi pedig várakozik arra, hogy az lefusson, amivel a teljes program végét jelzi.
-Megjegyzendő, hogy ez nem zárja ki egyéb \lcmd{eval} parancsok végrehajtásától, a többszálú végrehajtásnak köszönhetően ezek egyszerre történhetnek egy rankon.
+Hogy ezt lehetővé tegye a megvalósítás, az MPI ellentétes viselkedése ellenére, a belépési pontot csak specifikusan a $0.$ processz futtatja, és a többi pedig várakozik arra, hogy az lefusson, amivel a teljes program végét jelzi.
+Megjegyzendő, hogy ez nem zárja ki egyéb \lcmd{eval} parancsok végrehajtásától, a többszálú végrehajtásnak köszönhetően ezek egyszerre történhetnek egy MPI processzen.
 
-Ezt a speciális esetet leszámítva, minden rank azonos feladatot lát el, és azonos kódot futtat.
+Ezt a speciális esetet leszámítva, minden processz azonos feladatot lát el, és azonos kódot futtat.
 Egy szálon fut egy proaktor mintának megfelelő feladatot kezdeményező kódrészlet, amely a különböző beérkező MPI üzeneteket várja.
 Annak beérkezésekor a megfelelő adatstruktúrává alakítja, és egy sorba helyezi el aszinkron végrehajtásra, amit egy thread--pool valósít meg.
 Ebből egy--egy szál kiveszi a futtatandó feladatot, és elkezdi futtatni.
 Az így futó kód felel meg egy--egy \lcmd{eval} függvény paraméterében meghívott függvény kiértékelésének, így ez is teljes értékű Linda kódként viselkedik: kezdeményezhet saját kommunikációt bármely Linda művelet segítségével, akár külön \lcmd{eval} parancsot is futtathat.
 A lefutása végén a kiértékelt függvényhívásokkal, és a megfelelő egyszerű adat mezőkkel képzet ennes beírásara kerül a Linda \ts{}--be.
 
-Azt, hogy kinek küldi el egy \lcmd{eval}--t elindító folyamat az üzenetet azt helyileg dönti el minden folyamat, amikor erre kerül a sor.
-Ezzel a lokális döntéssel megspórolható egyéb kommunikáció, ami esetleg csak metaadatokat vinne a rankok között.
+Azt, hogy melyik processznek küldi el egy \lcmd{eval}--t elindító folyamat az üzenetet azt helyileg dönti el minden folyamat, amikor erre kerül a sor.
+Ezzel a lokális döntéssel megspórolható egyéb kommunikáció, ami esetleg csak metaadatokat vinne a folyamatok között.
 A választás algoritmusa jelenleg egyszerűen egy egyenletes eloszlású véletlen szám generátor, bár a kód ennek a választásáért felelős objektumot egy polimorf interfészen keresztül éri el, így könnyedén cserélhető egy szofisztikáltabb megoldásra, ha szükség volna rá.
 
 A szimpla adatmódosító üzenetek azonban egyszerűbben kerülnek elküldésre, a teljes MPI infrastruktúrát valamilyen szinten megkerülve.
@@ -289,9 +289,9 @@ A szerveren ilyenkor lefutó folyamatokról \aref{subsec:the-lts}.~szekcióban t
 \subsubsection{Sorosítás}\label{subsubsec:serial}
 
 Az MPI környezet biztosít a fejlesztők számára eszközöket, amelyeket felhasználva saját típusok hozhatóak létre annak érdekében, hogy hatékonyabban lehessen nem primitív típusokat tartalmazó üzeneteket küldeni.
-Az alap ötlet, hogy ezt felhasználva lehetséges megadni egy olyan leírást az MPI megvalósításnak, hogy az másolás nélkül ki tudja olvasni egy memóriapufferből az elküldendő adatokat.
+Az alapötlet, hogy ezt felhasználva lehetséges megadni egy olyan leírást az MPI megvalósításnak, hogy az másolás nélkül ki tudja olvasni egy memóriapufferből az elküldendő adatokat.
 Bár ez egy hatékonyságot jelentősen növelő és hasznos lehetőség, sajnos a jelenlegi célokra nem használható ki.
-A Linda rendszer típusok szintjén mutatott dinamikusságát már nem tudja lekövetni: dinamikus hosszúságú tömbök (Linda \nes{}), amelyek egyesével lehetnek különböző típusúak (és ez által méretűek), ráadásul ezen mezők között is lehet olyan, amelyik dinamikus hosszúságú (sztring mező), de még rekurzívan másik \nes{}t tartalmazó is (függvényhívás jelölő).
+A Linda rendszer típusok szintjén mutatott dinamikusságát már nem tudja lekövetni: dinamikus hosszúságú tömbök (Linda \nes{}), amelyek egyesével lehetnek különböző típusúak és méretűek, ráadásul ezen mezők között is lehet olyan, amelyik dinamikus hosszúságú (sztring mező), de még rekurzívan másik \nes{}t tartalmazó is (függvényhívás jelölő).
 
 Ennek eredményeképpen manuálisan kell megvalósítani a sorosítást.
 
@@ -325,13 +325,13 @@ A lekérdezéseket megvalósító ?--operatárorral képzett speciális \nes{}ek
 Az egyik legfontosabb eleme a Linda rendszernek a Linda \ts{}.
 Ezt a jelenlegi megvalósítás, az előzőekből már olvasható módon, a PostgreSQL adatbázis kezelőt felhasználva valósítja meg.
 
-A PostgreSQL támogatja, hogy saját szerver oldali bővítményt valósítsunk meg, amelyben teljesen saját SQL--ből használható függvényeket lehet definiálni, sok különböző támogatott nyelvet felhasználva, például (alapból beépítve) PL/pgSQL, Perl, Tcl vagy Python.
+A PostgreSQL támogatja, hogy saját szerveroldali bővítményt valósítsunk meg, amelyben teljesen saját SQL--ből használható függvényeket lehet definiálni, sok különböző támogatott nyelvet felhasználva, például (alapból beépítve) PL/pgSQL, Perl, Tcl vagy Python.
 Ezektől függetlenül egy C interfész is elérhető, amelyet az interpretált nyelvek is használnak; de lehetőségünk van nekünk is ezt használni.
 Ezt a lehetőséget összeszinkronizálva a saját típusok megvalósításának biztosításával, amelyhez pusztán pár függvény definiálására van szükség, elérhető, hogy egy teljesen saját típust lehessen létrehozni egy szerver oldali bővítményben vagy C--ben, vagy bármely olyan nyelven, amelyik képes a C ABI--nak megfelelő szimbólumokat definiálni egy dinamikus könyvtárban (SO, DLL).
 Mivel C++--al került megvalósításra a többi kódrészlet, így ez a bővítmény is C++--ban lett megírva, pár C nyelvű szimbólumot publikussá téve a könyvtárban.
 
 A bővítmény magában elég egyszerű, minimális funkcionalitást valósít meg.
-Összes feladata, ezzel szinkronban annyi, hogy a különböző rankok által küldött \nes{} objektumokat eltárolja, majd lehetővé tegye ezek között a keresést.
+Összes feladata, ezzel szinkronban annyi, hogy a különböző processzek által küldött \nes{} objektumokat eltárolja, majd lehetővé tegye ezek között a keresést.
 Ennek a célnak az eléréséhez két típust valósít meg a bővítmény.
 
 Az egyik az \texttt{LV\_TYPE}, amely egy adott Linda típust azonosít.
@@ -372,7 +372,7 @@ Bár az előzőekben leírt függvénypár a minimum, amit biztosítani kell egy
 Az egyik legegyértelműbb, a megfelelő bináris reprezentációból való konvertálás írás és olvasási műveleteknél.
 Ehhez \aref{subsubsec:serial}.~szekcióban leírtak szerinti sorosítási eljárás került megvalósításra \mbox{PostgreSQL} oldalon is.
 
-Ami még érdekes az adatbázisból a Linda megvalósításnak, az a kereshetőség biztosítása.
+Ami még érdekes az adatbázisból a Linda megvalósítás számára, az a kereshetőség biztosítása.
 Ehhez az aritmetikai relációs műveleteket kell megvalósítani, és hozzárendelni az elvárt operátorokhoz ($<, <=, =, >=, >$).
 A rendezettséget elsőként a típus alapján adhatjuk meg, és ha azok azonosak, akkor az érték szerinti összehasonlítás szerint.
 Ezeket az operátorokat felhasználva pedig létrehozható egy olyan \un operátor osztály (operator class), amelyik egy B--fa alapú index megvalósítását teszi lehetővé egy LV típusú oszlop felett, gyorsítva a keresést.
@@ -390,7 +390,7 @@ Ezeket az operátorokat felhasználva pedig létrehozható egy olyan \un operát
         \texttt{std::int32\_t} & 32--bites előjeles egész & $2$ & A szám értéke \\\hline
         \texttt{std::uint32\_t} & 32--bites előjel nélküli egész & $3$ & A szám értéke \\\hline
         \texttt{std::string} & sztring & $4$ & A sztring hossza 64--bites előjel nélküli egész számként, majd a sztring bájtjai \\\hline
-        \texttt{ldb::lv::fn\_call} & függvény hívás & $5$ & A sztringben leírtak szerint kódoltan a függvény neve, majd a rekurzívan \nes{}ként kódolva a paraméterei \\\hline
+        \texttt{ldb::lv::fn\_call} & függvényhívás & $5$ & A sztringben leírtak szerint kódoltan a függvény neve, majd a rekurzívan \nes{}ként kódolva a paraméterei \\\hline
         \texttt{std::int64\_t} & 64--bites előjeles egész & $6$ & A szám értéke \\\hline
         \texttt{std::uint64\_t} & 64--bites előjel nélküli egész & $7$ & A szám értéke \\\hline
         \texttt{single} & egyszeres lebegőpontos szám & $8$ & A szám értéke \\\hline
@@ -427,10 +427,10 @@ Ez nyilván egy kifogásolható megoldás, hiszen nagyon sok fölösleges keres�
 Emellett még akkor is újra és újra elküldi ugyan azt a sikeresen lefutott, de eredményt nem adó lekérdezést, ha közben semmi változtatás nem történt a \ts--ben, így garantálhatóan nem fog sikerülni.
 
 Általános esetben nem lehet azonban ennél jelentősen mást csinálni, esetleg a várakozások idejét finomítani vagy egyéb felületes optimalizációkat eszközölni.
-Összességében a tényleges megoldás a pollolást problémájára, hogy valamilyen várakozást építünk a programba, amelyik addig passzívan várakoztatja a kérdező folyamatot, amíg valamilyen feltétel nem teljesül, ami javítja (vagy garantálja) a lekérdezés sikerességét.
+Összességében a tényleges megoldás a pollolás problémájára, hogy valamilyen várakozást építünk a programba, amelyik addig passzívan várakoztatja a kérdező folyamatot, amíg valamilyen feltétel nem teljesül, ami javítja (vagy garantálja) a lekérdezés sikerességét.
 
 Ennek az értesítésnek jelenleg az adatbázis oldaláról kell most származnia, hiszen ott történik meg az a módosítás, amelyik kiválthatja a kliens reakcióját.
-Erre a feladatra a tökéletes megoldás ismételten egy PostgreSQL által nyújtott sajátos funkcionalitás: a \texttt{LISTEN} és \texttt{NOTIFY} SQL parancsok.
+Erre a feladatra a tökéletes megoldás a PostgreSQL által nyújtott sajátos funkcionalitás: a \texttt{LISTEN} és \texttt{NOTIFY} SQL parancsok.
 Ezek lehetővé teszik az adatbázis szerverhez kapcsolódott, és a hallgatózást elindító (\texttt{LISTEN}) klienseknek, hogy aszinkron értesítéseket kapjanak az adatbázistól, amikor bármelyik futó tranzakció kiadja a \texttt{NOTIFY} utasítást.
 Ehhez lehetséges társítani egy rövid szöveges üzenetet is, amelyet a hallgatózó kliensek megkapnak.
 Kihasználva ezt a lehetőséget, a beszúrt \nes{} érték elemeinek típusát azonosító számokat küldi el a szerver, amivel lehetővé teszi, hogy a klienseknek csak akkor kelljen újra elindítani a konkrét lekérdezést, ha a mezők típusai egyeznek, ezzel is minimalizálva a biztosan sikertelen lekérdezések futtatását, és könnyítve az adatbázis dolgát.

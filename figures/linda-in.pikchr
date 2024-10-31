@@ -8,7 +8,7 @@ text "..." big
 TS0L: text "Linda TS" with .nw at TS0.sw - (.05, -.023)
 
     text with .w at TS0.ne - (.074, .05) "int x;" ljust monospace
-AT: text with .w at TS0.ne - (.273, .18) "in(\"A\", ?x);" ljust monospace color gray
+AT: text with .w at TS0.ne - (.273, .18) "in(\"A\", ?x);" ljust monospace
     text with .w at TS0.ne - (.4, .3)    "assert(x == 42);" ljust monospace color gray
     text with .w at TS0.ne - (.6, .42)   "assert(!inp(\"A\", ?x));" ljust monospace color gray
     text with .w at TS0.ne - (-.01, .54)   "..." ljust monospace color gray

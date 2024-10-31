@@ -1,0 +1,34 @@
+Q: box invis "double x;" ljust "in(\"A\", 4, ?x);" ljust fit
+
+move 
+down
+move .3
+
+TS0: box width .7 height .9 color gray
+
+      text with .n at TS0.n "(\"B\", 1, 4.2)" 
+AL1:  text "(\"A\", 3, .2)" 
+AL2:  text "(\"A\", 4, .3)" 
+      text "..." big
+TS0L: text "Linda TS" with .nw at TS0.sw - (.05, -.023)
+
+
+F1: box at first box.e - (.64, .07) width .17 height .17
+F2: box at first box.e - (.48, .07) width .12 height .12
+Q1: box invis at first box.e - (.35, .07) width .12 height .12
+R1: box with .e at AL2.e - (.1, 0) width .14 height .14 color LightGreen
+
+arc -> from F1.s to AL1.w + (.1, 0)
+arc -> from F1.s to AL2.w + (.1, 0)
+
+spline -> from F2.s go down .7 \
+  then .5 heading 110 \
+  then .3 heading 90 \
+  then .2 heading 40 \
+  to AL2.w + (.334, 0)
+
+spline -> color LightGreen from R1.e go right .1 \
+  then .2 heading 45 \
+  then .6 heading 0 \
+  then .1 heading -45 \
+  to Q1.e "értékadás" "" "" "" "" above

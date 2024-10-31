@@ -1,4 +1,4 @@
-PICS := lb-conf.pikchr scatter-gather.pikchr linda-rd.pikchr linda-in.pikchr
+PICS := lb-conf.pikchr scatter-gather.pikchr linda-rd.pikchr linda-in.pikchr query.pikchr
 SVGS := linda-eval.svg linda-arch.svg
 PDFS := $(PICS:.pikchr=.pdf) $(SVGS:.svg=.pdf)
 
