@@ -2,8 +2,8 @@
 % !TeX encoding = UTF-8
 \chapter{Alkalmazási példák}\label{ch:examples}
 
-\Aref{ch:linda}.~fejezetben már ismertetésre került maga a Linda nyelv, és annak az itt adott implementációja.
-Ezt felhasználva ebben a fejezetben olyan példák kerülnek bemutatásra, amelyek a Linda rendszer egyszerűségén keresztül bevezetést tudnak nyújtani különböző párhuzamos programozási technikákba, és egy gyakorlati problémának a megoldása is bemutatásra kerül.
+\Aref{ch:linda}.~fejezetben már ismertetésre került a Linda nyelv, és annak az itt adott implementációja.
+Ezt felhasználva ebben a fejezetben olyan példák kerülnek bemutatásra, amelyek a Linda rendszer egyszerűségén keresztül bevezetést tudnak nyújtani különböző párhuzamos programozási technikákba, és egy gyakorlati problémának a megoldását is bemutatom.
 
 \section{Oktatási példák}
 
@@ -14,11 +14,11 @@ Egyes helyeken a teljes megoldás kódja feltüntettem.
 
 \Aref{subsec:linda-model}.~szakasz azt állítja, hogy a Linda általánosítás Hoare CSP modellje felett.
 Ebbe a megállapításba beletartozik, hogy a CSP által biztosított csatornák megvalósíthatóak a Linda által nyújtott elemek segítségével.
-Ez belátható a \ts{} olyan módú felhasználásával, ahol egy adatszerkezetnek adott prefixű \nes{}ek tartoznak össze egy csatorna pufferjébe, a műveletek pedig ezen értékeket szúrnak be vagy vesznek ki a \ts--ből, a beszúrási sorrendet figyelve.
+Ez belátható a \ts{} olyan módú felhasználásával, ahol egy adatszerkezetnek adott prefixű \nes{}ek tartoznak össze egy csatorna pufferjébe, a műveletek pedig ezen értékekkel dolgoznak a \ts--ben, a beszúrási sorrendet figyelve.
 
 \begin{xrcs}
-    pwc: Parallel Word Count. Fájlok méretét kell meghatározni, és kiírni a szavak, sorok, és karakterek (bájtok, ASCII feltételezhető) számát.
-    Adjon olyan megoldást a problémára Linda nyelven, amelyik párhuzamosan olvassa be a fájlokat, és a végén kiírja az összesített értékeket.
+    pwc: Parallel Word Count. Fájlok méretét kell meghatározni, és kiírni a szavak, sorok, és karakterek (bájtok, ASCII) számát.
+    Adjon olyan megoldást a problémára Linda nyelven, amelyik párhuzamosan olvassa be a fájlokat, és a végén kiír egy összesítést.
 \end{xrcs}
 
 \begin{sln}\label{sln:csp-ch-buf}
@@ -40,7 +40,7 @@ Ezzel megvalósítható hogy egy alapból nagy adathalmazon lehessen valami olya
 Egy általános ábra látható \aref{fig:scatter-gather}.~ábrán, ahol a scatter művelet a fentről lefele mutató piros (root folyamatból szétszóró) nyilak, a gather pedig az ellentétes irányú kékek.
 
 \begin{figure}[htb]
-    \centerline{\resizebox{9cm}{!}{\includegraphics{figures/scatter-gather.pdf}}}
+    \centerline{\resizebox{8.5cm}{!}{\includegraphics{figures/scatter-gather.pdf}}}
     \caption{A scatter és gather műveletek}
     \label{fig:scatter-gather}
 \end{figure}
@@ -76,7 +76,7 @@ A szemaforok tulajdonsága, hogy atomivá tehető több művelet egymásutánja,
     Hozzon létre egy Linda alapú szemafort, amelyik képes egy adott kódrészletre garantálni, hogy egyszerre csak $n$ folyamat futtatja le!
     A szemaforok zárolására és felengedésére legyen egy--egy függvény, illetve legalább egy ,,konstruktor'' függvény, amelyik beállítja adott szemaforra $n$ értékét.
 %    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
-    Ha tudja, próbálja megvalósítani aktív várakozás (spin lock) nélkül.
+%    Ha tudja, próbálja megvalósítani aktív várakozás (spin lock) nélkül.
 
 %    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
 %        int
@@ -108,7 +108,7 @@ A szemaforok tulajdonsága, hogy atomivá tehető több művelet egymásutánja,
 
 A manapság egyre nagyobbra növő kódbázisok problémája, hogy egy-egy teljes fordítás nagyon sokáig tart.
 Ahogy növekszik a forrásfájlok mérete és azok száma, a komplikált, nagy feladatokat megoldó projektek fordítása egyre több és több ideig tart.
-Az egyik legjobb példa erre a jelenségre, ami nyílt forráskódú projekt, az az LLVM, ahol csak az LLVM modul (jelenleg 17 külön modullal rendelkezik a projekt) soros fordítása a számomra elérhető asztali gépen (ld. \ref{sub:results}.\ szekció a hardver specifikációjáért) nagyságrendileg 60 (!) percig tart.
+Az egyik legjobb példa erre a jelenségre, ami nyílt forráskódú projekt, az az LLVM, ahol csak az LLVM modul soros fordítása a számomra elérhető asztali gépen (ld. \ref{sub:results}.\ szekció a hardver specifikációjáért) nagyságrendileg 60 percig (!) tart.
 
 A modern informatikában használt nyelvek saját eszközeik rendelkeznek a megfelelő infrastruktúrával, hogy ezt a problémát különböző megoldásokkal orvosolni próbálják a nyelv ökoszisztémájába illeszthető módon.
 A gyakori esetekben a lokális gépen található, előző fordítások során már előállított félkész fordítási melléktermékek újrafelhasználásán keresztül megvalósított \un inkrementális fordítás, és párhuzamosítás a biztosított megoldás.
@@ -122,7 +122,7 @@ A parallel fordítás irányban elindulva azonban találjuk a ninja eszközt, am
 Ennek megfelelően több esetben a ninja gyorsabb fordítási sebességet biztosít, pusztán a jobban kidolgozott párhuzamosítási alrendszere miatt.
 
 Ezt az ötletet felhasználva egy Linda alapú megvalósítást is lehetséges készíteni, amelyik a Linda és az alatta található MPI lehetőségeit kihasználva biztosít egy párhuzamosítást kiemelten kihasználó fordító környezetet.
-A megvalósítás a Linda Build kifejezésből az ,,lb'' nevet viseli.
+A program a Linda Build nevet~viseli.
 
 Az általános ötlet egyszerű: a fordítandó fájlok listáját feltöltjük a TS--be, amiből a feldolgozó folyamatok az éppen felhasználtat ki tudják venni.
 Az éppen kivett parancsot feldolgozza egy--egy megfelelő műveletet végző folyamat, majd a készített fájlt visszateszi a TS--be, ezzel lehetővé téve más folyamatoknak, hogy az attól a fájltól függő parancsot végrehajtsa. A következőkben ennek részletes, a megalkotott Linda implementációt használó megvalósítása következik.
@@ -131,11 +131,10 @@ A főprogram logikája kifejezetten egyszerű, a C++--Linda pszeudokód láthat�
 A \texttt{read\_config\_file} függvény beolvassa a végrehajtandó lépéseket, majd azokat beírja a kód a TS--be.
 Ennek a függvénynek a tárgyalása nem hordoz a párhuzamosítás szempontjából érdemi információt, így elhagyom.
 
-\begin{lstlisting}[numbers=left, language=C++, label=lst:lb-algo, caption={Az lb főprogram logikája}]
+\begin{lstlisting}[numbers=left, language=C++, label=lst:lb-algo, caption={A Linda Build főprogram logikája}]
 std::vector<command> commands = read_config_file();
-for (const auto& [command_type, output, inputs] : commands) {
+for (const auto& [command_type, output, inputs] : commands)
 	out(command_type, output, inputs);
-}
 int worker_count = start_workers();
 in("_WORKERS_FINISHED", worker_count);
 \end{lstlisting}
@@ -145,24 +144,21 @@ A párhuzamosság fokát a \texttt{lrt::this\_runtime()} segédfüggvényen kere
 Az így indított folyamatok fogják a tényleges fordítási parancsok meghívását megvalósítani egy általános futtató eljárás meghívásán keresztül.
 Ez a függvény számára érdekes ennesek első értékét, a futtatandó program nevét, az előre betöltendő kapcsolók listáját és a saját azonosítóját kapja meg.
 (Az azonosító csak a hiba--diagnózist és az egy egyedi értékkel való visszatérést teszi könnyen megoldhatóvá, összességében lehagyható lehet.)
-Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtatandó program közötti összerendelés beégetett sztringekként jelennek meg a kódban, de egy éles megvalósításban a kód a konfigurációs fájlból kerülnének valamilyen módon kiolvasásra: ez a kód és a konfigurációs fájl nyelvének egyszerűsége miatt elhagyásra került, mivel a párhuzamosítási lépéseket nem befolyásolja.
+Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtatandó program közötti összerendelés beégetett sztringekként jelennek meg a kódban, de egy éles megvalósításban a konfigurációs fájlból kerülnének kiolvasásra: ez a kód és a konfigurációs fájl nyelvének egyszerűsége miatt elhagyásra került, mivel a párhuzamosítási lépéseket nem befolyásolja.
 
 \begin{lstlisting}[numbers=left, language=C++, label=lst:lb-startworkers, caption={Az fordító folyamatok indítása}]
-int
-start_workers() {
+int start_workers() {
 	int parallelism = lrt::this_runtime().world_size();
-	for (int i = 0; i < parallelism; ++i) {
+	for (int i = 0; i < parallelism; ++i)
 		eval("_CC_WORKER", worker("CC", "gcc", " -c", i));
-	}
-	for (int i = 0; i < parallelism; ++i) {
+	for (int i = 0; i < parallelism; ++i)
 		eval("_LD_WORKER", worker("LD", "gcc", "", i));
-	}
 	return parallelism;
 }
 \end{lstlisting}
 
 Ezek után a \texttt{worker} függvény kódja tartalmaz még érdemi kódrészletet.
-Az ebben megjelenő \texttt{execute\_process} részletes tárgyalását elhagyom, mert csak az operációs rendszertől függő \texttt{fork+execve} és \texttt{CreateProcessEx} rendszerhívások elfedését oldja meg, semmi érdemleges kódot nem tartalmaznak.
+Az ebben megjelenő \texttt{execute\_process} részletes tárgyalását elhagyom, mert csak az operációs rendszer folyamatindító rendszerhívásainak elfedését oldja meg, semmi érdemleges kódot nem tartalmaznak.
 
 A \texttt{worker} függvény maga sem komplikált: addig fut egy ciklusban, amíg talál általa végrehajtható parancsokat, azaz van még a kapott paranccsal kezdődő ennes a TS--ben.
 Amint ezek elfogytak, növeli a sikeresen lefutott folyamatok számát, és kilép.
@@ -170,13 +166,11 @@ Ami fontos tulajdonsága a Lindának, és itt kihasználja a program, hogy az eg
 Amikor az ,,\texttt{in("\_WORKERS\_FINISHED", ldb::ref(\&current))}'' sor lefut, akkor az az 2--es megszűnik a TS--ben lenni, és így ha másik folyamat is hasonló időben végezne, akkor is csak az egyik fogja sikeresen kivenni, hogy növelje; a másiknak várakoznia kell a megfelelő \texttt{out} utasításig.
 
 \begin{lstlisting}[numbers=left, language=C++, label=lst:lb-worker, caption={A futtató folyamat}]
-int
-worker(std::string cmd, std::string exe, std::string args, int worker_id) {
-	std::string output;
-	std::string inputs;
+int worker(std::string cmd, std::string exe, std::string args, int worker_id) {
+	std::string output, inputs;
 	while (inp(cmd, ldb::ref(&output), ldb::ref(&inputs))) {
 		bool success = execute_process(exe, args, output, inputs);
-		if (!success) throw std::runtime_error(std::format("cannot run({}): {} {} -o {} {}", worker_id, exec, args, output, inputs))
+		if (!success) throw std::runtime_error(std::format("fatal: {} from {}", output, inputs));
 	}
 
 	int current;
@@ -188,7 +182,7 @@ worker(std::string cmd, std::string exe, std::string args, int worker_id) {
 \end{lstlisting}
 
 
-Az lb, a make és ninja eszközökhöz hasonlóan, egy konfigurációs fájl beolvasásával kezdi a futást, még mielőtt bármilyen fordítási lépést végrehajtana.\footnote{A make \texttt{Makefile} nélküli, alapértelmezett szabályokat használó futtatását leszámítva, de akkor is megpróbál beolvasni egy fájlt, csak lekezeli, hogy nem létezik.}
+A Linda Build, a make és ninja eszközökhöz hasonlóan, egy konfigurációs fájl beolvasásával kezdi a futást, még mielőtt bármilyen fordítási lépést végrehajtana.\footnote{A make \texttt{Makefile} nélküli, alapértelmezett szabályokat használó futtatását leszámítva, de akkor is megpróbál beolvasni egy fájlt, csak lekezeli, hogy nem létezik.}
 Maga a konfigurációs fájl kifejezetten primitív, hiszen a program célja pusztán a párhuzamosítási lehetőségek bemutatása, emiatt a hozzá tartozó konfigurációs nyelv csak a minimumot biztosítja, hogy használható legyen, mint fordítási lépéseket leíró fájl.
 Minden sor három adatot tárol: fordítani (,,\texttt{CC}'') vagy összeilleszteni (,,\texttt{LD}'') kell az adott lépésben, a készítendő kimeneti fájl neve és egy felsorolás a bementi fájlokról.
 
@@ -196,7 +190,7 @@ Minden sor három adatot tárol: fordítani (,,\texttt{CC}'') vagy összeilleszt
 Ennek a projektnek a vizuális reprezentációja található \aref{fig:lb-demo-graphic}.~ábrán.
 Az ábrán látható színek segítenek a párhuzamosítási lehetőségeket szemléltetni: az egyes forrásfájlok függetlenek egymástól, pusztán az összeillesztési lépésnél kell az egyes források fordítását bevárni.
 
-\begin{lstlisting}[numbers=left, label=lst:lb-conf, caption={Példa lb konfiguráció}]
+\begin{lstlisting}[numbers=left, label=lst:lb-conf, caption={Példa Linda Build konfiguráció}]
 CC src1.o src1.c
 CC src2.o src2.c
 CC src3.o src3.c
@@ -205,27 +199,29 @@ LD exec src1.o src2.o src3.o src4.o
 \end{lstlisting}
 
 \begin{figure}[!bt]
-	\center{\resizebox{7cm}{!}{\includegraphics{figures/lb-conf.pdf}}}
+	\center{\resizebox{12cm}{!}{\includegraphics{figures/lb-conf.pdf}}}
 	\caption{A példa projekt vizuális ábrázolása}
 	\label{fig:lb-demo-graphic}
 \end{figure}
 
 \subsection{Eredmények}\label{sub:results}
 
-% TODO szar az egész
+Annak érdekében, hogy látható legyen, hogy ezzel a rövid kódrészlettel is lehetséges, jól párhuzamosított kódot megvalósítani, a megvalósított fordító rendszer sebességét egy szintetikus projekt fordításával mértem le.
 
-Annak érdekében, hogy látható legyen, hogy ezzel a rövid kódrészlettel is lehetséges, jól párhuzamosított kódot megvalósítani, a megvalósított fordító rendszer sebessége egy szintetikus projekt fordításával került lemérésre.
-A méréshez használt ,,projekt'' egyes fájljait egy Perl szkript használatával lehetséges legenerálni, amelyik a projekt C++ forrásai mellé egy ,,\texttt{Makefile}'', ,,\texttt{ninja.build}'' és egy ,,\texttt{lb.build}'' fájlt is generál.
-Ezekben a fájlokban az egyes források fordításai vannak az adott eszköz szintaktikájával leírva: minden fájl saját szabállyal, mert egyedül a make támogat olyan általános szabályformákat, amelyeket egyszer elég definiálni, és egy makró értékében lévő összes fájlra lehet értelmezni.
-A generált C++ forrásfájlok sablon meta--programozással számolják ki a Fibonacci számokat, mindegyik fájl a nevében megadott sorszámút, ezzel elérve azt, hogy nem teljesen triviális az egyes fájlok fordítása, és ezáltal nem az operációs rendszer folyamatindítási idejét mérjük.
-A fordítás során kiszámolt értékek a 2000 és 3000 közötti sorszámúak.
+Ehhez szükség volt egy olyan ,,projektre'', amelyik lehetővé teszi a konkrét fordítási sebesség mérését, és nem csak egy egyszerű minta C++ projekt.
+Ennek hiánya úgy jelentkezik, hogy ha nem direkt olyan fájlokat fordítunk, amelyek szándékosan lassan fordulnak, akkor a párhuzamosítás közben a tényleges mérés redukálódik egyszerűen arra, hogy az adott operációs rendszer milyen gyorsan tudja elindítani a fordító processzt.
 
-A mérésre egy 16 magos (32 hyper-threadinggel) AMD Ryzen 9 7950X processzorral, 64 GiB operatív tárral rendelkező asztali gép volt felhasználva; a diszk, amelyen a mérés történt egy Samsung 990PRO 500 GiB SSD.
-A teljes mérés \hbox{Microsoft Windows 10 ($10.0.19045.4291$)} operációs rendszer alatt történt, a felhasznált MPI megvalósítás az MSMPI ($10.1.12498.18$). A futtatott programok, a Linda megvalósítás mellett a GNU projekt make megvalósítása (4.3), és ninja (1.11.1).
-Előbbi a MinGW környezettel fordítva, utóbbi a Microsoft Visual C++ rendszerével.
+Szerencsére a C++ nyújt több különböző lehetőséget arra, hogy a fordítást elegendően lelassítsam.
+Itt sablon meta--programozást használtam arra, hogy a Fibonacci számokat számoljam ki rekurzív megoldással.
+Mivel ez nagyon sok sablon példányosítást jelent, így egy--egy ilyen fájl fordítása már mérhető ideig tart.
+A fájlok darabszámát előállítani egy Perl szkripttel lehetséges, amely a források sokszorosítása mellett a szükséges ,,\texttt{Makefile}'', ,,\texttt{ninja.build}'' és ,,\texttt{lb.build}'' fájlokat is elkészíti.
+
+A mérésre egy 16 magos (32 HT-vel) AMD Ryzen 9 7950X processzorral, 64 GiB operatív tárral rendelkező asztali gép volt felhasználva; a diszk, amelyen a mérés történt egy Samsung 990 PRO 500 GiB SSD.
+A teljes mérés \hbox{Microsoft Windows 10 ($10.0.19045.4291$)} operációs rendszer alatt történt, a felhasznált MPI megvalósítás az MSMPI ($10.1.12498.18$). A futtatott programok, a Linda megvalósítás mellett a GNU make ($4.3$), és ninja ($1.11.1$).
+Előbbi a MinGW környezettel fordítva, utóbbi az Microsoft Visual C++ rendszerrel.
 
 A mérés eredményei \aref{fig:bs-speed}.~ábrán és \aref{tbl:bs-speed}.~táblázatban\label{hf:tbl-ref} láthatóak.
-Fontos megjegyezni, hogy a Linda megvalósítás esetén az $1$ szálú futtatás eredményekhez hozzátartozik, hogy a rendszer nem támogatja a tisztán soros végrehajtást, így látszólag ,,jobban'' teljesít ebben az esetben, pedig csak az történik, hogy egy--egy fordító és linkelő folyamat indul, ezek viszont képesek parallel is futni, így valamilyen alacsony mértékeben párhuzamosítást valósítanak meg, ami a sok linkelési feladat miatt mérhető sebességnövekedést okoz a mérés során.
+Fontos megjegyezni, hogy a Linda megvalósítás esetén az $1$ szálú futtatás eredményekhez hozzátartozik, hogy a rendszer nem támogatja a tisztán soros végrehajtást, így látszólag ,,jobban'' teljesít ebben az esetben, pedig csak az történik, hogy egy--egy fordító és linkelő folyamat indul, ezek viszont képesek parallel is futni, így valamilyen alacsony mértékeben párhuzamosítást valósítanak meg, ami mérhető sebességnövekedést okoz a mérés során.
 
 Ezt figyelembe véve \aref{fig:bs-speed}.~ábrán látható, hogy a három megvalósítás, nagyságrendileg azonos futási időt generál $8$--as szintű párhuzamosításig.
 Ez a része, emiatt, nem is igazán izgalmas az ábrának.
@@ -233,11 +229,11 @@ Ennél a pontnál azonban a GNU make stagnálásba kezd, és a további párhuza
 
 További parallelizációnál látszik, hogy a ninja rendszer a hatékonyabban tudja a párhuzamosítást megvalósítani, mint a saját Linda alapú megvalósításom, amelyik, bár arányosan gyorsul, de mindig egy kicsivel (3--4 másodperccel) le van maradva tőle.
 
-Az előző bekezdésben említett kicsit túl agresszív párhuzamosítás miatt a 32--es érték látható, hogy az lb esetében már visszaesést produkál.
+Az előző bekezdésben említett túl agresszív párhuzamosítás miatt a 32--es érték látható, hogy a Linda esetében már visszaesést produkál.
 Ez a hardver elérhető párhuzamosításának túllépése miatt van, hiszen a (HT--vel) 32 szál már a fordítási és linkelési lépések egyszerre történő párhuzamosítását nem tudja megfelelően kiszolgálni.
-Ezzel szemben a ninja eszköz pontosan 32 darab folyamatot indít egyszerre, így az még nem feszegette a hardver limitációit.
+Ezzel szemben a ninja csak 32 darab folyamatot indít egyszerre, így az még nem feszíti túl a hardvert.
 
-Összesítve látható, hogy bár nem a leggyorsabb eszköz lett az lb, de a kód méretét és egyszerűségét tekintve arányosan egy kifejezetten jó megoldást ad a párhuzamos fordítás problémára.
+Összesítve látható, hogy bár nem a leggyorsabb eszköz lett az Linda Build, de a kód méretét és egyszerűségét tekintve arányosan egy kifejezetten jó megoldást ad a párhuzamos fordítás problémára.
 Emellett kiemelkedő teljesítménynek tartom, hogy az egyik legelterjedtebb projekt karbantartó eszköznél megbízhatóan gyorsabb fordítást tudott produkálni, egy ennyire kisméretű kódbázissal.
 Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem többek között egy tényleges konfigurációs nyelvet és annak a feldolgozó kódrészleteket is tartalmazzák, így nem hasonlítóhatóak kódsorra össze, mindazonáltal nagyságrendileg 300 sor kódból ilyen eredményt elérni alátámasztja a Linda erejét, mint párhuzamosítási eszközt, ami még a mai körülmények között is megállja a helyét, akár még a mára erősen párhuzamosítható asztali környezetben is.
 
@@ -247,7 +243,7 @@ Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem t
         eszköz & 1 & 2 & 4 & 8 & 16 & 24 & 30 & 32 \\
         \hline
         \hline
-        lb & 174.92 & 144.64 & 69.58 & 52.80 & 35.71 & 31.29 & 29.56 & 31.89 \\
+        Linda Build & 174.92 & 144.64 & 69.58 & 52.80 & 35.71 & 31.29 & 29.56 & 31.89 \\
         \hline
 
         ninja & 268.30 & 137.86 & 72.07 & 45.82 & 32.89 & 28.00 & 25.30 & 25.25 \\
@@ -282,7 +278,7 @@ Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem t
                 (30, 29.56)
                 (32, 31.89)
             };
-            \addlegendentry{lb}
+            \addlegendentry{Linda Build}
 
             \addplot+ [smooth] coordinates {
                 (1,  268.30)
