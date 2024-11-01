@@ -143,30 +143,78 @@ Az alábbi táblázat tartalmazza a jelenlegi Linda megvalósítás által bizto
 	real_main(int, char**) { ... }
 \end{lstlisting}
 
+\subsection{Scatter--Gather minta}\label{x:subsec:sln-sg}
+
+\begin{lstlisting}[language=c,numbers=left,caption={Példa a Scatter-Gather mintára}]
+std::uint64_t
+find_corp_in_csv(std::string corp, std::string csv);
+	
+std::uint64_t
+sum_chunk(std::string corp, std::uint64_t begin, std::uint64_t end) {
+	std::uint64_t ret{};
+	for (auto i = begin; i < end; ++i) {
+		std::string csv;
+		in("CSV", i, ldb::ref(&csv));
+		ret += find_corp_in_csv(corp, csv);
+	}
+	return ret;
+}
+	
+int 
+real_main(int, char**) {
+	std::size_t files_sz{0};
+	std::string csv;
+	while (std::readline(std::cin, csv) && !csv.empty()) {
+		out("CSV", file_sz, csv);
+	}
+	
+	std::string company;
+	std::readline(std::cin, company);
+	
+	std::size_t parallelism = lrt::this_runtime().world_size();
+	auto chunk_sz = files_sz / parallelism;
+	auto extras = files_sz % parallelism;
+	for (std::size_t i = 0; i < parallelism ; ++i) {
+		auto start = chunk_sz * i + std::min(i, extras);
+		auto effective_size = chunk_sz + (i < extras);
+		eval("SUM", i, (sum_chunk)(company, start, start + effective_size));
+	}
+	
+	std::uint64_t sum{};
+	for (unsigned i = 0; i < parallelism; ++i) {
+		std::uint64_t partial_sum;
+		in("SUM", i, ldb::ref(&partial_sum));
+		sum += partial_sum;
+	}
+	std::cout << "Sum for " << company << "is " << sum << "\n";
+	return 0;
+}
+\end{lstlisting}
+
 \subsection{Szemaforok}\label{x:subsec:sln-semaphore}
 
 \begin{lstlisting}[gobble=2,language=C,numbers=left,caption={Példa szemafor megvalósítás}]
 	int
 	new_lsemaphore(int with_max = 1) {
 		int last = 0;
-		inp("__SEM_CNTR", ldb::ref(&last)); // stays 0 if lookup fails (i.e. first call)
+		inp("_SEM_CNTR", ldb::ref(&last)); // stays 0 if lookup fails (i.e. first call)
 
 		int current = last + 1;
-		out("__SEM_CNTR", current);
-		out("__SEM_STATE", current, with_max);
+		out("_SEM_CNTR", current);
+		out("_SEM_STATE", current, with_max);
 		return current;
 	}
 
 	void
 	acquire_lsemaphore(int sem_handle) {
 		int current = 0;
-		in("__SEM_STATE", sem_handle, ldb::ref(&current));
+		in("_SEM_STATE", sem_handle, ldb::ref(&current));
 		while (current == 0) {
-			// clear previously set signal on the mutex
-			inp("__SEM_SIGNAL", sem_handle);
-			out("__SEM_STATE", sem_handle, 0);
-			in("__SEM_SIGNAL", sem_handle);
-			in("__SEM_STATE", sem_handle, ldb::ref(&current));
+			// clear previously set signal on the semaphore
+			inp("_SEM_SIGNAL", sem_handle);
+			out("_SEM_STATE", sem_handle, 0);
+			in("_SEM_SIGNAL", sem_handle);
+			in("_SEM_STATE", sem_handle, ldb::ref(&current));
 		}
 		out("__SEM_STATE", sem_handle, current - 1);
 	}
@@ -174,9 +222,9 @@ Az alábbi táblázat tartalmazza a jelenlegi Linda megvalósítás által bizto
 	void
 	release_lsemaphore(int sem_handle) {
 		int current = 0;
-		in("__SEM_STATE", sem_handle, ldb::ref(&current));
-		out("__SEM_STATE", sem_handle, current + 1);
-		out("__SEM_SIGNAL", sem_handle);
+		in("_SEM_STATE", sem_handle, ldb::ref(&current));
+		out("_SEM_STATE", sem_handle, current + 1);
+		out("_SEM_SIGNAL", sem_handle);
 	}
 \end{lstlisting}
 

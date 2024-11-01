@@ -10,17 +10,18 @@ Egyik, hogy a Linda \index{Linda} csak egy \un koordinációs nyelv \cite{morris
 Így nem még egy megtanulandó új nyelv, ami külön parallel programok készítését teszi lehetővé, hanem pár egyszerű művelet, amelyeket egy $h$ gazdanyelvbe illesztve változtatja azt egy párhuzamos $h$-Linda programozási nyelvvé \cite{ahuja_linda_1986}.
 Ezen megközelítés ereje abban rejlik, hogy a fejlesztés nagy része ismert eszközökkel, megszokott környezetben történhet.
 Hasonlóan látható a sikeressége is, hiszen eredetileg a készítők a C (\textit{C-Linda}) és Fortran (\textit{Fortran-Linda}) programozási nyelvek kiterjesztéseként hozták létre \cite{ahuja_linda_1986}, azonban az évek során sok másik nyelvhez készültek külső fejlesztőktől különböző megvalósítások.
-Ezek között találhatóak több esetben a HPC környezetben klasszikusan előforduló nyelveken kívül, elsősorban nagyvállalati kontextusban használt nyelvek is; ilyenek többek közt a Java \cite{sun_microsystems_javaspaces_2011, lehman_hitting_2001}, de még szkript nyelvekhez, mint például a Ruby, is készültek implementációk \cite[Part 3 -- Rinda]{seki_druby_nodate}.
+Ezek között találhatóak több esetben a HPC környezetben klasszikusan előforduló nyelveken kívül, elsősorban nagyvállalati kontextusban használt nyelvek is; ilyenek többek közt a Java \cite{sun_microsystems_javaspaces_2011, lehman_hitting_2001}, de még szkript nyelvekhez, mint például a Ruby \cite[Part 3 -- Rinda]{seki_druby_nodate} és a Python \cite{andrew_wilkinson_pylinda_2007}, is készültek implementációk.
 % TODO PyLinda
 
 A másik kulcsa az egyszerűségnek, hogy az előzőekben leírt gazdanyelv kiegészítéséhez pusztán hat műveletet vagy szabad függvényt ({\selectlanguage{english}free function}) használ fel.
 Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{\ac{TS}}, innentől, az eredeti publikációt követve csak \acs{TS}, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
-Ebben látszik egy osztott memóriás világbeli szemlélet: minden program és programrészlet, ugyan azt az \ts{}-t látja, és az ezen végzett módosításokon keresztül tudnak adatot átadni egymásnak.
+Ebben látszik egy osztott memóriás világbeli szemlélet: minden program és programrészlet, ugyanazt az \ts{}-t látja, és az ezen végzett módosításokon keresztül tudnak adatot átadni egymásnak.
 Az osztott memória azonban sok extra munkát és odafigyelést igényel a programozó részéről.
-Biztosítani kell, hogy az adott memóriaterületek írása/olvasása megfelelően legyen szinkronizálva a különböző számítási folyamatok közül: a gyakran előforduló problémák közül az egyik leggyakoribbak a versenyhelyzetek ({\selectlanguage{english}race condition}) és a pattok ({\selectlanguage{english}deadlock}), amelyek mindegyike a nem megfelelő zárolásból adódik a program \un{} kritikus szekcióiban.
+Biztosítani kell, hogy az adott memóriaterületek írása/olvasása megfelelően legyen szinkronizálva a különböző számítási folyamatok között.
+A gyakran előforduló problémák közül az egyik leggyakoribbak a versenyhelyzetek ({\selectlanguage{english}race condition}) és a pattok ({\selectlanguage{english}deadlock}), amelyek mindegyike a nem megfelelő zárolásból adódik a program \un{} kritikus szekcióiban.
 A Linda által adott megoldás ezeket elfedi a programozó elől, hiszen a konkrét osztott erőforráson végezhető műveletek atomi utasításokként viselkednek, így a zárolás automatikusan megvalósul egy--egy adatelem felett.
 
-Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének került bevezetésre. Ennek a pontos definiáláshoz azonban először szükség van pár alap építőelemre a Linda eszköztárban:
+Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének került bevezetésre. Ennek a pontos definiáláshoz azonban először szükség van pár alap-építőelemre a Linda eszköztárban:
 
 \begin{defn}[Linda típus]\label{def:linda-type}\index{Linda típus}
     Azon típusok halmaza, amelyeket a Linda rendszer képes megfelelően kezelni.
@@ -52,13 +53,6 @@ Az előző bekezdésben a \ts, mint elsődleges eleme a Linda modelljének kerü
 A Linda \ts{} definíciója említi, hogy módosítható és lekérdezhető halmazként viselkedik.
 Azonban, a tárolt értékek mellett, a konkrét műveletek, amiket végrehajthatunk a halmazon, sem szabadon választhatóak: csak Linda műveletekkel lehetséges minden interakció a \ts--el.
 Ezek azok a szekció elején említett egyszerű műveletek, amelyeket a Linda beilleszt egy választott gazdanyelvbe, hogy azt párhuzamos programozási nyelvvé változtassa. Ezek definíciója látható \aref{def:linda-cmd}.~definícióban.
-
-\begin{figure}[b!]
-    \centering
-    \resizebox{8.5cm}{!}{\includegraphics{figures/linda-in.pdf}}
-    \caption{A Linda \lcmd{in} és \lcmd{inp} művelet}
-    \label{fig:linda-in}
-\end{figure}
 
 \begin{defn}[Linda műveletek]\label{def:linda-cmd}\index{Linda művelet}
     A Linda modell által támogatott műveletek listája. Ezek a következőek:
@@ -96,7 +90,14 @@ Ezek azok a szekció elején említett egyszerű műveletek, amelyeket a Linda b
     \end{description}
 \end{defn}
 
-Az műveletek megadásában található $tuple...$, egyes Linda értékekkel megadott Linda \nes{}, hozzá véve még \aref{subsec:qm-op}.~szekcióban ismertetett lehetőséget.
+\begin{figure}[bt!]
+	\centering
+	\resizebox{9.5cm}{!}{\includegraphics{figures/linda-in.pdf}}
+	\caption{A Linda \lcmd{in} és \lcmd{inp} művelet}
+	\label{fig:linda-in}
+\end{figure}
+
+Az műveletek megadásában található $tuple...$, egyes Linda értékekkel megadott Linda \nes{}, hozzávéve még \aref{subsec:qm-op}.~szekcióban ismertetett lehetőséget.
 Az \lcmd{eval}-ban látható $tuple^*...$ paraméter értelmezésére a következőkben fog szó esni \aref{subsec:eval-fn}.~szekcióban.
 
 Míg az \lcmd{out} működése egyszerű és egyértelmű, az \lcmd{in(p)} és \lcmd{rd(p)} függvények megértését segítik \aref{fig:linda-in}.\ és \aref{fig:linda-rd}.~ábrák.
@@ -104,14 +105,14 @@ Ezeken a TS módosulása az \lcmd{in} esetében, és az általános egyszer mint
 Ugyan ez \lcmd{rd} esetén nem jelentkezik, ott bennmarad a TS--ben a megtalált ennes.
 
 \begin{figure}[thb]
-    \centerline{\resizebox{8.5cm}{!}{\includegraphics{figures/linda-rd.pdf}}}
+    \centerline{\resizebox{9.5cm}{!}{\includegraphics{figures/linda-rd.pdf}}}
     \caption{A Linda \lcmd{rd} és \lcmd{rdp} művelet}
     \label{fig:linda-rd}
 \end{figure}
 
 \subsection{A ?--operátor} \label{subsec:qm-op}
 
-Ha csak az eddigiekben definiált műveletekkel rendelkezünk, akkor felmerül az a probléma, hogy csak azokat az \nes\ értékeket vagyunk képesek kivenni \ats{}--ből, amelyeket tudjuk, hogy benne vannak---vagy a program lefutása során bele fognak kerülni valamikor.
+Ha csak az eddigiekben definiált műveletekkel rendelkezünk, akkor felmerül az a probléma, hogy csak azokat az \nes\ értékeket vagyunk képesek kivenni \ats{}--ből, amelyeket tudjuk, hogy benne vannak, vagy a program lefutása során bele fognak kerülni valamikor.
 Esetlegesen még lekérdezhetjük, hogy egy adott \nes{} benne van-e \ats{}--ben, az \lcmd{inp} vagy \lcmd{rdp} függvények valamelyikével, de ennél többet nem tudunk tenni.
 
 Ennek megoldására került bevezetésre a ?--operátor.
@@ -160,16 +161,12 @@ A szálak \texttt{std::thread} (és \texttt{std::jthread}) objektumokként vanna
 Ezek mellett az \texttt{std::atomic<T>} sablon is felhasználásra került pár zárolás--mentes algoritmus megvalósítására, pl.\ egy folyamat szintű monoton számláló implementálására.
 
 Fontos kitérni rá, hogy miért nem döntöttem az OpenMP használata mellett.
-Ez egy elterjedt könyvtár a közös memóriával rendelkező párhuzamosításra, amit itt a szálakkal megvalósítok.
-A szál--párhuzamosított részei a programnak azonban nagy részben  \aref{subsec:ranks}.~szekcióban tárgyalt thread--pool megvalósítás részeként üzemelnek, ami mellett egy--egy segéd szál végez még érdemi munkát.
+Ez egy elterjedt könyvtár a közös memóriával rendelkező párhuzamosításra.
+Használata nem növelte volna annyiban a hordozhatóságot, amit eleve a C++ szabványhoz kötöttem, mint amennyivel nehezítette volna a megvalósítást és a kód olvashatóságát.
+Így a szál--párhuzamosított részei a programnak nagy részben  \aref{subsec:ranks}.~szekcióban tárgyalt thread--pool megvalósítás részeként üzemelnek, ami mellett egy--egy segéd szál végez még érdemi munkát.
 Ezek azonban sokáig futó szálak, amelyek gyakorlatilag csak a program legvégén lépnek ki.
 Ilyen például a beérkező üzeneteket feldolgozó szál.
-Ezt a struktúrát könnyebnek véltem a beépített eszközökkel megvalósítani.
-
-Emellett még előfordulhatnak párhuzamosítható ciklusok, amelyekre jól használható lenne az OpenMP.
-Bár nem sok található meg a teljes kódbázisban, ezek nagy része is a sorosítási folyamat valamelyik lépése, amelyik valahogyan nem függ a többitől.
-Ezek azonban kis számosságuk miatt nem véltek jelentős párhuzamosíthatósági kérdésnek, így a C++ által biztosított \texttt{std::execution::par\_unseq} direktívával ellátott szabványos algoritmusok is megfelelően működnek, jelentős kódmódosítás nélkül.
-Ezen érvek miatt nem került felhasználásra az OpenMP.
+A  párhuzamosítható ciklusokat, a C++ által biztosított \texttt{std::execution::par\_unseq} direktívával ellátott szabványos algoritmusokkal valósítottam meg.
 
 A szálak mellett a processz szintű parallelizáció pedig az MPI könyvtárat használja fel.
 Ezzel elérhető, hogy a Linda implementáció használható bármely olyan platformon, ahol létezik egy MPI megvalósítás.
@@ -184,7 +181,7 @@ Több okból esett erre az adatbázis-kezelőre a választás; ezek az alábbiak
 Fontos döntési pont volt, hogy egy megbízható, jó történelemmel rendelkező ACID kompatibilis adatbázist valósít meg, hiszen így a Linda \ts{} könnyedén tudja garantálni, hogy az atomi műveletek (tranzakciókba zárva) csak egészében futnak le, és izolálva vannak más folyamatok műveleteitől.
 Emellett előnyben részesítettem a PostgreSQL--t, a nyílt forráskódja miatt, ami egy kifejezetten jól strukturált és dokumentált C kódbázis.
 Ez jelentősen könnyebbé tette a kódhoz való hozzáillesztését, és a szerver oldali bővítmény fejlesztését.
-Utolsó előnye pedig, hogy egy ORDBMS ({\selectlanguage{english}Object-Relational Database Management System}), azaz objektum-relációs adatbázis kezelő rendszer: lehetővé teszi, hogy saját összetett típusokat lehessen definiálni, amelyeknek a tárolására alkalmas.
+Nem elhanyagolható előnye pedig, hogy egy ORDBMS ({\selectlanguage{english}Object-Relational Database Management System}), azaz objektum-relációs adatbázis kezelő rendszer: lehetővé teszi, hogy saját összetett típusokat lehessen definiálni, amelyeknek a tárolására alkalmas.
 Ezek lehetnek egyszerű struktúrák, de teljesen saját típusokat is lehetséges megvalósítani saját konverziós függvények megadásával.
 Sőt a nagyon különleges viselkedésű típusokra még az optimalizáló számára is lehetséges segédfüggvényeket definiálni a típus hatékony használatáról.
 Arról, hogy ezeket a lehetőségeket hogy használja ki a megvalósítás, több szó esik
@@ -198,7 +195,7 @@ Két helyen azonban kompromisszumos megoldást kellett alkalmazni, a használt n
 Az első a ?--operátor, ahogy \aref{subsec:qm-op}.~szekcióban bemutattam, sajnos nem megvalósítható C++ nyelven.
 Mivel ez magában nem egy létező C++ operátor, amit túl lehetne terhelni, új operátorok felvételét pedig a nyelv nem támogatja.
 A legközelebbi szintaktikával a \texttt{?:}, avagy a feltételes operátor rendelkezik hiszen ez tartalmazza egyedül a kérdőjel karaktert, viszont ennek elválaszthatatlan párja a kettőspont.
-Ugyanakkor, ha valahogyan még meg is lehetne oldani, valamiféle rafinált előfeldolgozási lépésekkel, hogy kettőspontok a kód megfelelő részeire bekerüljenek, akkor is szembesülnénk azzal a problémával, hogy ezt az operátort nem lehet felüldefiniálni, amivel ez az egész irány zsákutcává változik.
+Ugyanakkor, ha valahogyan még meg is lehetne oldani valamiféle rafinált előfeldolgozási lépésekkel, hogy kettőspontok a kód megfelelő részeire bekerüljenek, akkor is szembesülnénk azzal a problémával, hogy ezt az operátort nem lehet felüldefiniálni, amivel ez az egész irány zsákutcává változik.
 
 Ezt megoldandó, egy saját függvény bevezetésére mellett döntöttem:
 az \texttt{ldb::ref}, egy mutatót vesz át arra a változóra, amelyiket a lekérdezésben szerepeltetni szeretnénk, és készít belőle egy olyan belső típust, amelyik alapján a lekérdezés végrehajtó tudja, hogy egyenlőség illesztéskor, ebbe a mutatóba bele kell írni az illeszkedő \nes{} megfelelő pozíciójú értékét.
@@ -206,12 +203,12 @@ A név a szabványos könyvtárban található \texttt{std::ref} függvényre ut
 
 A ?--operátor egyszerű, és alapvetően az eredetitől nem nagyon különböző, megoldással végződő nehézségeihez képest az \lcmd{eval} függvény egy komplexebb problémával szembesít.
 A benne szereplő függvények szintaktikája teljesen megegyezik az egyszerű függvényhívás nyelvi szintaktikájával, és mégis egy teljesen más, inkompatibilis szemantikával rendelkezik.
-Ennek megfelelően, meg kell szakítani a függvényhívást az \lcmd{eval} paraméterlistájában, és átalakítani egy másik folyamatban lefutó, de azonos jelentésű függvényhívássá.
+Ennek megfelelően meg kell szakítani a függvényhívást az \lcmd{eval} paraméterlistájában, és átalakítani egy másik folyamatban lefutó, de azonos jelentésű függvényhívássá.
 
 Ennek a helyzetnek az eredetihez legközelebbi megoldásához a C++ makróihoz kell fordulni.
 Ennek oka, hogy a sablonok szintjén a függvényhívás, mint művelet,
 nem állítható vissza egy függvénnyé, amit meghívnak, és egy híváshoz tartozó paraméterhalmazzá.
-Sajnos, teljes kompatibilitás még a makrók felhasználásával sem megoldható, mert az előzőekben említett függvény és paraméterlista kettest nem lehet előállítani egy tényleges függvényhívás szintaktikájából.
+Sajnos teljes kompatibilitás még a makrók felhasználásával sem megoldható, mert az előzőekben említett függvény és paraméterlista kettest nem lehet előállítani egy tényleges függvényhívás szintaktikájából.
 A sablonokkal ellentétben azonban, az előfeldolgozó képes arra, hogy ha a függvényhívásnál a függvény is külön zárójellel van körbefogva (pl.\ \texttt{(fv)(1, 2)}), akkor ezt a konstrukciót a függvény nevét tartalmazó sztringre, a függvényre mutató mutatóra és a paraméterek listájára bontsa szét.
 
 % TODO LUT
@@ -253,7 +250,7 @@ A zölddel jelölt lifeline--ok az MPI kommunikátor részei, míg a kék szín 
 Látható, hogy az \lcmd{eval} üzenetek a különböző processzek között direkt kerülnek eloszlásra, míg a primitív adat írás/olvasás műveletek egyenesen a postgres folyamat felé kerülnek irányításra.
 
 \begin{figure}[htb]
-    \centerline{\resizebox{8cm}{!}{\includegraphics{figures/linda-arch.pdf}}}
+    \centerline{\resizebox{10cm}{!}{\includegraphics{figures/linda-arch.pdf}}}
     \caption{A Linda megvalósítás kommunikációs diagramja}
     \label{fig:linda-arch}
 \end{figure}
@@ -281,7 +278,7 @@ Ezzel a lokális döntéssel megspórolható egyéb kommunikáció, ami esetleg 
 A választás algoritmusa jelenleg egyszerűen egy egyenletes eloszlású véletlen szám generátor, bár a kód ennek a választásáért felelős objektumot egy polimorf interfészen keresztül éri el, így könnyedén cserélhető egy szofisztikáltabb megoldásra, ha szükség volna rá.
 
 A szimpla adatmódosító üzenetek azonban egyszerűbben kerülnek elküldésre, a teljes MPI infrastruktúrát valamilyen szinten megkerülve.
-\Aref{subsubsec:serial}.~szekció szerinti sorosítás mezőnkénti végrehajtása után, a Linda \nes{}t egyszerűen a \mbox{PostgreSQL} szerver felé kerül elküldésre.
+\Aref{subsubsec:serial}.~szekció szerinti sorosítás mezőnkénti végrehajtása után, a Linda \nes{} egyszerűen a \mbox{PostgreSQL} szerver felé kerül elküldésre.
 Itt azonban nem a teljes \nes{}t sorosítjuk, hanem mezőnként az értékeket.
 Ennek a magyarázata, hogy az adatbázis kezelőnek egy SQL lekérdezést kell küldeni, amelyet az értelmez és végrehajt.
 Ehhez az egyes mezőket egy paraméterezett lekérdezésben küldjük a szervernek, amelyik az egyes mezők értékét így egyesével fogja tudni felhasználni.
@@ -325,16 +322,16 @@ A lekérdezéseket megvalósító ?--operatárorral képzett speciális \nes{}ek
 \subsection{A Linda \ts}\label{subsec:the-lts}
 
 Az egyik legfontosabb eleme a Linda rendszernek a Linda \ts{}.
-Ezt a jelenlegi megvalósítás, az előzőekben már olvasható módon, a PostgreSQL adatbázist felhasználva valósítja meg.
+Ezt a jelenlegi megvalósítás, az előzőekben már bemutatott módon, a PostgreSQL adatbázist felhasználva valósítja meg.
 
 A PostgreSQL támogatja, hogy saját szerveroldali bővítményt valósítsunk meg, amelyben teljesen saját SQL--ből használható függvényeket lehet definiálni, sok különböző támogatott nyelvet felhasználva, például (alapból beépítve) PL/pgSQL, Perl, Tcl vagy Python.
 Ezektől függetlenül egy C interfész is elérhető, amelyet az interpretált nyelvek is használnak; de lehetőségünk van nekünk is ezt használni.
-Ezt a lehetőséget és hogy pár függvény felhasználásával lehetséges saját típust definiálni használja ki a Linda \ts{}, és a C \ac{ABI} elvárásainak megfelelő interfészen keresztül ad egy C++ megvalósítást a szükséges függvényekre.
+Ezt használja ki a Linda \ts{}, és a C \ac{ABI} elvárásainak megfelelő interfészen keresztül ad egy C++ megvalósítást a szükséges függvényekre.
 %Ezt a lehetőséget összeszinkronizálva a saját típusok megvalósításának biztosításával, amelyhez pusztán pár függvény definiálására van szükség, elérhető, hogy egy teljesen saját típust lehessen létrehozni egy szerver oldali bővítményben vagy C--ben, vagy bármely olyan nyelven, amelyik képes a C ABI--nak megfelelő szimbólumokat definiálni egy dinamikus könyvtárban (SO, DLL).
 %Mivel C++--al került megvalósításra a többi kódrészlet, így ez a bővítmény is C++--ban lett megírva, pár C nyelvű szimbólumot publikussá téve a könyvtárban.
 
 A bővítmény magában elég egyszerű, a \ts{} minimális funkcionalitását valósítja itt meg.
-Összes feladata, hogy a különböző processzek által küldött \nes{} objektumokat eltárolja, majd lehetővé tegye ezek között a keresést.
+Összes feladata, hogy a különböző processzek által küldött \nes{} objektumokat eltárolja és lehetővé tegye ezek között a keresést.
 Ehhez két típust definiál.
 %Ennek a célnak az eléréséhez két típust valósít meg a bővítmény.
 
@@ -343,8 +340,9 @@ A tényleges értéke egy 8--bites egész szám, amely egy kódot tárol, hogy m
 Elsőre limitálónak hangzik a pusztán 255 darab típus tárolásának lehetősége, de perspektívaként ebből a jelenlegi rendszer összesen 10 darabot használ, így van elég sok bővítési lehetőség.
 %Ráadásul, ha ez valamiért nem lenne elegendő, akkor a típus mérete növelhető azzal a feltétellel, hogy minden folyamat a frissített verziót várja el az adatbázistól.
 
-A konkrét értékek a biztosított típusok esetén láthatóak \aref{tbl:type-serial}.~táblázat megfelelő oszlopában.
-Ebben a típusban tárolt értékek konkrétan nem kerülnek tárolásra, csak a kereséses során vannak felhasználva, amikor olyan lekérdezés fut, amelyben egy adott típust adtunk csak meg, és nem egy konkrét Linda értéket.
+A konkrét értékek a biztosított típusok esetén láthatóak a függelék \aref{tbl:type-serial}.~táblázatában.
+Az értékek konkrétan nem kerülnek tárolásra, csak a kereséses során vannak felhasználva, amikor olyan lekérdezés fut, amelyben egy adott típust adtunk csak meg, és nem egy konkrét Linda értéket.
+Ez feleltethető meg az eredeti ?--operátoros kifejezésnek.
 
 A másik az \texttt{LV}, amelyik már magával a Linda típussal megfeleltethető az adatbázis szintjén, összegtípusként képes tárolni egy oszlopban az összes \ref{def:linda-type}.~definíció szerinti típust.
 A jelen megvalósításban támogatottak \aref{tbl:type-serial}.~táblázatban látható típusok, azzal a megkötéssel, hogy a függvények tárolása nem az adatbázisban történik, így abban nem is került megvalósításra kezelésük.
@@ -375,7 +373,7 @@ Bár az előzőekben leírt függvénypár a minimum, amit biztosítani kell egy
 Az egyik legegyértelműbb, a megfelelő bináris reprezentációból való konvertálás írás és olvasási műveleteknél.
 Erről a formátumról lásd \aref{subsubsec:serial}.~szekciót.
 
-Ami még érdekes az adatbázisból a Linda megvalósítás számára, az a keresés.
+Ami még érdekes az adatbázisból a megvalósítás szempontjából, az a keresés.
 Ehhez az aritmetikai relációs műveleteket kell megvalósítani, és hozzárendelni az elvárt operátorokhoz ($<, <=, =, >=, >$).
 A rendezettséget elsőként a típus alapján adjuk meg, és ha azok azonosak, akkor érték szerinti összehasonlítást végzünk.
 Ezeket az operátorokat felhasználva pedig létrehozható egy olyan \un operátor osztály (operator class), amelyik egy B--fa alapú index megvalósítását teszi lehetővé az LV típus felett, gyorsítva a keresést.
@@ -403,7 +401,7 @@ Ha pedig már léteznek a megfelelő függvények és operátorok, akkor könnye
 
 Egyes esetekben a Linda modell szerint várakozni kell, amíg valamilyen érték nem kerül be a \ts--be.
 Ilyen esetek az \lcmd{in} és \lcmd{rd} műveletek, ha a keresett értékeket nem találja meg elsőre a \ts--ben.
-Erre két megoldást lehet adni: adott időközönként újra lefuttatjuk a lekérdezést, majd annak eredménye alapján megyünk tovább, vagy ismételten újra keresünk.
+Az egyik megoldás erre, hogy adott időközönként újra lefuttatjuk a lekérdezést, majd annak eredménye alapján megyünk tovább, vagy ismételten újra keresünk.
 Tehát aktívan várakozunk, és aktívan polloljuk az adatbázist.
 Ez nyilván egy kifogásolható megoldás, hiszen nagyon sok fölösleges keresést generál az adatbázis számára.
 Emellett még akkor is újra és újra elküldi ugyanazt az eredményt nem adó lekérdezést, ha közben semmi változtatás nem történt a \ts--ben, így biztosan nem fog sikerülni.
