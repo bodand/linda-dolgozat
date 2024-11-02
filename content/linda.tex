@@ -362,16 +362,16 @@ Ezeknek a típusoknak a megvalósításához kellett megírni azokat a függvén
 Ez könnyen megvalósítható módon, egy kukac-szimbólummal (\texttt{@}) elválasztva a típus \aref{tbl:type-serial}.~táblázatbeli kódja hexadecimálisan majd a konkrét érték sztringként leírt értéke.
 Pár példa érték látható \aref{lst:custom-sql-type}.~listázásban, annotálva az adott érték típusával.
 
+Bár az előzőekben leírt függvénypár a minimum, amit biztosítani kell egy saját típus megvalósításához, egyéb függvények is megadhatóak, a különféle optimalizációk és extra lehetőségek elkészítéséhez.
+Az egyik legegyértelműbb, a megfelelő bináris reprezentációból való konvertálás írás és olvasási műveleteknél.
+Erről a formátumról lásd \aref{subsubsec:serial}.~szekciót.
+
 \begin{lstlisting}[language=SQL, label=lst:custom-sql-type, caption={Saját típus támogatás PostgreSQL--ben}]
 SELECT LV '0@123'    -- std::int16_t
      , LV '7@789'    -- std::uint64_t
      , LV 'A@1'      -- ldb::lv::type_ref, ami std::uint8_t-t tárol
      , LV '4@szöveg' -- std::string
 \end{lstlisting}
-
-Bár az előzőekben leírt függvénypár a minimum, amit biztosítani kell egy saját típus megvalósításához, egyéb függvények is megadhatóak, a különféle optimalizációk és extra lehetőségek elkészítéséhez.
-Az egyik legegyértelműbb, a megfelelő bináris reprezentációból való konvertálás írás és olvasási műveleteknél.
-Erről a formátumról lásd \aref{subsubsec:serial}.~szekciót.
 
 Ami még érdekes az adatbázisból a megvalósítás szempontjából, az a keresés.
 Ehhez az aritmetikai relációs műveleteket kell megvalósítani, és hozzárendelni az elvárt operátorokhoz ($<, <=, =, >=, >$).
