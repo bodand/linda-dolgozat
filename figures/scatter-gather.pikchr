@@ -2,11 +2,11 @@ A0S: box "A" fit fill LightGreen
      box "A" same
 A0E: box "A" same
 
-B0S: box "B" fit fill LightBlue
+B0S: box "B" fit fill 0xbfe2ff
      box "B" same
 B0E: box "B" same
 
-C0S: box "C" fit fill Tomato
+C0S: box "C" fit fill 0xffab47
      box "C" same
 C0E: box "C" same
 
@@ -16,13 +16,13 @@ A1E: box "A" same
 
 move
 
-B1S: box "B" fit fill LightBlue
+B1S: box "B" fit fill 0xbfe2ff
      box "B" same
 B1E: box "B" same
 
 move
 
-C1S: box "C" fit fill Tomato
+C1S: box "C" fit fill 0xffab47
      box "C" same
 C1E: box "C" same
 

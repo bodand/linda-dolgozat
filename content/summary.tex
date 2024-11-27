@@ -4,18 +4,21 @@
 \chapter*{Összegzés}
 \addcontentsline{toc}{chapter}{Összegzés}
 
-\todo[inline]{Ide még szerintem kéne írni valamit, de nem tudom mit.}
+A Linda nyelv, bár egy korai párhuzamosítási paradigmára épül a mai napig alkalmas különböző párhuzamos elvek bemutatására és kifejezetten jó oktatási eszközként szolgálhat.
 
-A dolgozat elején bevezettem a párhuzamos programozás szükségességét, és a modern programfejlesztésben való elhanyagolhatatlan szerepét.
+A dolgozatban megmutattam a párhuzamos programozás szükségességét, és a modern programfejlesztésben való elhanyagolhatatlan szerepét.
 Röviden bemutattam a parallelizációs világ hardver és szoftver komponenseit, jobban hangsúlyozva a szoftveres megoldásokat és azok közötti kapcsolatokat, amelyeknek a tárgyalása a Linda nyelvnek, a dolgozat fő témájának, a bevezetéséhez vezetett.
 
-A Linda nyelv teljes elméleti bemutatását követően, ismertettem az általam készített megvalósítás általánosságoktól elindulva elmélyedve a különböző releváns részletekbe.
-Elsőként a használt MPI környezet felhasználást a skálázható párhuzamosításra, amely lehetővé teszi az asztali gépektől a szupergépekig való futtatását a Linda megvalósításnak.
-A használt adatbázis is részletekbe menően ismertetve lett, hiszen az alkotja a Linda modell központi részét.
+A Linda nyelv elméleti bemutatását követően, ismertettem az általam készített megvalósítást általánosságoktól elindulva elmélyedve a különböző releváns részletekben.
+Elsőként az \ac{MPI} környezet felhasználását a párhuzamosításra, amely lehetővé teszi az asztali gépektől a szupergépekig terjedő futtatását a Linda megvalósításomnak.
+A használt adatbázis is részletekbe menően ismertem, hiszen az alkotja a Linda modell központi részét.
 
-Állítottam, hogy a Linda kiválóan használható a párhuzamos programozás oktatására, a könnyű mentális modellje és szintaxisa miatt, amivel könnyen el lehet sajátítani, és amin keresztül a parallelizációs technikák bemutatása kifejezetten jól átadhatóak.
-Erről az állításomat pár mintapéldával támasztottam alá, amelyeken keresztül a párhuzamosítási elvek egyszerű bemutatása érhetően megvalósítható.
+Megállapítottam, hogy a Linda kiválóan használható a párhuzamos programozás oktatására, a könnyű mentális modellje és szintaxisa miatt, amivel könnyen el lehet sajátítani, és amin keresztül a parallelizációs technikák bemutatása kifejezetten jól átadhatóak.
+Állításomat pár mintapéldával támasztottam alá, amelyeken keresztül a párhuzamosítási elvek egyszerű bemutatása érhetően megvalósítható.
 
-A gyakorlati használhatóságának bizonyítására pedig egy gyakran párhuzamosított feladatra, a forrásfájlok parallel fordítására, adtam egy kódrészletet.
-Ezzel bemutattam, hogy a Linda nyelv rövid és átlátható kóddal képes megközelíteni az ipari gyakorlatban sokszor látható eszközök által biztosított sebességet, az egyiket stabilan le is győzte a sebesség terén.
+Egy gyakorlati példára adott megvalósításon keresztül megállapítottam, hogy hordozható és általános párhuzamosításra is alkalmas akár még nem \ac{SMP} környezetben is.
+Bemutattam, hogy a Linda nyelv rövid és átlátható kóddal képes lépést tartani az gyakorlatban látható eszközökkel, valamint demonstráltam megvalósításom hatékonyságát.
 
+Továbbfejlesztési lehetőségek, hogy \ac{HPC} környezetben a szükséges komponensek automatikus indítása megtörténjen, amikor egy Linda programot elindítunk.
+Emellett lényeges további oktatási anyagok kidolgozása és bemutatása. 
+Több különböző mérést is kell még végezni, esetleg a már létező Linda rendszerekkel, különféle környezetekben.
