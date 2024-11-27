@@ -77,33 +77,52 @@ A szemaforok tulajdonsága, hogy atomivá tehető több művelet egymásutánja,
 \begin{xrcs}
     Hozzon létre egy Linda alapú szemafort, amelyik képes egy adott kódrészletre garantálni, hogy egyszerre csak $n$ folyamat futtatja le!
     A szemaforok zárolására és felengedésére legyen egy--egy függvény, illetve legalább egy ,,konstruktor'' függvény, amelyik beállítja adott szemaforra $n$ értékét.
-%    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
-%    Ha tudja, próbálja megvalósítani aktív várakozás (spin lock) nélkül.
+    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
 
-%    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
-%        int
-%        work(int sem) {
-%            acquire_lsemaphore(sem);
-%            // .. critical section ..
-%            release_lsemaphore(sem);
-%        }
-%
-%        int
-%        real_main(int, char**) {
-%            int sem_handle = new_lsemaphore(3);
-%            for (int i = 0; i < 12; ++i) {
-%                eval("worker", i, (work)(sem_handle));
-%            }
-%            wait_workers();
-%            return 0;
-%        }
-%    \end{lstlisting}
+    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
+        int
+        work(int sem) {
+            acquire_lsemaphore(sem);
+            // .. critical section ..
+            release_lsemaphore(sem);
+        }
+
+        int
+        real_main(int, char**) {
+            int sem_handle = new_lsemaphore(3);
+            for (int i = 0; i < 12; ++i) {
+                eval("worker", i, (work)(sem_handle));
+            }
+            wait_workers();
+            return 0;
+        }
+    \end{lstlisting}
 \end{xrcs}
 
 \begin{sln}
     Az alábbi megoldás kihasználja a hatékony várakozás lehetőségét, és nem aktív várakozással kezeli magukat a szemaforokat.
     Egy aktívan várakozó szemafor is teljesíti a feladat előírásait és könnyebben átlátható kódot eredményezhet: egy \texttt{inp} egy ciklusban a szemafor foglalásánál jelentősen egyszerűbb, de jóval több TS írást olvasást okoz.
     A kód \aref{x:subsec:sln-semaphore}.~függelékben olvasható.
+\end{sln}
+
+\subsection{Eratoszthenész szitája}
+
+Jól ismert algoritmus Eratoszthenész szitája.
+Célja, hogy egy adott intervallumon megkeresse az összes prímszámot. Koncepciója, hogy amikor prímnek jelölünk egy számot, akkor akkor minden többszörösét kitöröljük a prím-jelöltek közül, hiszen biztosan nem prímek.
+Ezt addig ismételjük a megmaradó számokon lépkedve, amíg nem látjuk be minden számról, hogy prím vagy sem.
+
+A párhuzamosítási lehetőség abban rejlik, hogy egy adott szám többszöröseinek törlését az összes többi számtól függetlenül el lehet végezni.
+Emiatt viszont egyszerűen párhuzamosítani is lehet ezt a műveletet.
+
+\begin{xrcs}
+    Adjon egy Linda alapú párhuzamos megvalósítást Eratoszthenész szitájára.
+\end{xrcs}
+
+\begin{sln}
+    Ebben a megoldásban két dologra használjuk a TS--t: elsőként feltöltjük a keresett intervallumban található értékeket, majd felvesszük a kezdő osztó értékét.
+    Utána megfelelő számú párhuzamos számítást elindítunk, amelyek mindegyike egyesével kiveszi a következő osztót a TS--ből, majd annak többszöröseit kiveszi az intervallumból.
+    A program végén, amikor az összes párhuzamosan futó függvény visszatért, a TS--ben maradó értékeket, mint a prímeket, kiírja.
+    A megoldás kódja olvasható \aref{x:subsec:sieve}.~függelékben.
 \end{sln}
 
 \section{Párhuzamos fordítás}
@@ -152,9 +171,9 @@ Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtat
 int start_workers() {
 	int parallelism = lrt::this_runtime().world_size();
 	for (int i = 0; i < parallelism; ++i)
-		eval("_CC_WORKER", worker("CC", "gcc", " -c", i));
+		eval("_CC_WORKER", (worker)("CC", "gcc", " -c", i));
 	for (int i = 0; i < parallelism; ++i)
-		eval("_LD_WORKER", worker("LD", "gcc", "", i));
+		eval("_LD_WORKER", (worker)("LD", "gcc", "", i));
 	return parallelism;
 }
 \end{lstlisting}

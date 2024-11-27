@@ -12,6 +12,15 @@ Ezen megközelítés ereje abban rejlik, hogy a fejlesztés nagy része ismert e
 Hasonlóan látható a sikeressége is, hiszen eredetileg a készítők a C (\textit{C-Linda}) és Fortran (\textit{Fortran-Linda}) programozási nyelvek kiterjesztéseként hozták létre \cite{ahuja_linda_1986}, azonban az évek során sok másik nyelvhez készültek külső fejlesztőktől különböző megvalósítások.
 Ezek között találhatóak több esetben a HPC környezetben klasszikusan előforduló nyelveken kívül, elsősorban nagyvállalati kontextusban használt nyelvek is; ilyenek többek közt a Java \cite{sun_microsystems_javaspaces_2011, lehman_hitting_2001}, de még szkript nyelvekhez, mint például a Ruby \cite[Part 3 -- Rinda]{seki_druby_nodate} és a Python \cite{andrew_wilkinson_pylinda_2007}, is készültek implementációk.
 
+Mivel az általam a következőkben adott megvalósítás C++ nyelven készült, ezért fontos kitérni az ezen a nyelven már megvalósított régebbi rendszerekre.
+Ezek a Boreas \cite{naval_aeriboreas_2024} és CppLinda \cite{thomas_arkadius_sluga_modern_2007}.
+Ezekkel az implementációkkal akadnak azonban problémák.
+A Boreas pusztán az adattárolást valósítja meg egy elosztott \ts{} formájában, a nyelvbe épített párhuzamosítást (\ld \lcmd{eval}, \ref{def:linda-cmd}.~szekció) nem.
+Ennek megfelelően, nem tekinteném egy teljes értékű Linda megvalósításnak.
+A CppLinda biztosítja ugyan a teljes Linda eszköztárat, mára a kódbázisa öregnek számít.
+Eredetileg csak Linux alapú operációs rendszereken működött a használt operációs rendszer szintű függvényhívások miatt, amivel a kommunikációt és folyamatindítást valósítja meg.
+Modern rendszereken azonban, se asztali gépen, se szuperszámítógépen már sajnos nem fordítható még Linux alatt sem, a kódbázisának módosítása nélkül.
+
 A másik kulcsa az egyszerűségnek, hogy az előzőekben leírt gazdanyelv kiegészítéséhez pusztán hat műveletet vagy szabad függvényt ({\selectlanguage{english}free function}) használ fel.
 Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{\ac{TS}}, innentől, az eredeti publikációt követve csak \acs{TS}, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
 Ebben látszik egy osztott memóriás világbeli szemlélet: minden program és programrészlet, ugyanazt az \ts{}-t látja, és az ezen végzett módosításokon keresztül tudnak adatot átadni egymásnak.

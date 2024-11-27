@@ -5,6 +5,7 @@
 %\documentclass[11pt,a4paper,twoside,openright]{report}  % Duplex
 
 \input{include/packages}
+\renewcommand{\baselinestretch}{1.5}
 
 \newcommand{\vikszerzoVezeteknev}{Bodor}
 \newcommand{\vikszerzoKeresztnev}{András}
@@ -21,12 +22,12 @@
 \newcommand{\vikkonzulensCVezeteknev}{}
 \newcommand{\vikkonzulensCKeresztnev}{}
 
-\newcommand{\vikcim}{Linda nyelv megvalósítása MPI alapon} % Cím
+\newcommand{\vikcim}{Linda nyelv implementálása szupergépre} % Cím
 \newcommand{\viktanszek}{\bmeiit} % Tanszék
-\newcommand{\vikdoktipus}{\tdk} % Dokumentum típusa (\bsc vagy \msc)
-\newcommand{\vikmunkatipusat}{tdk} % a "hallgató nyilatkozat" részhez: szakdolgozatot vagy diplomatervet
+\newcommand{\vikdoktipus}{\bsc} % Dokumentum típusa (\bsc vagy \msc)
+\newcommand{\vikmunkatipusat}{szakdolgozatot} % a "hallgató nyilatkozat" részhez: szakdolgozatot vagy diplomatervet
 
-\input{include/tdk-variables}
+%\input{include/tdk-variables}
 \newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev} % egy szerző esetén
 %\newcommand{\szerzoMeta}{\vikszerzoVezeteknev{} \vikszerzoKeresztnev, \tdkszerzoB} % két szerző esetén
 
@@ -36,7 +37,6 @@
 %\input{include/thesis-en}
 
 \input{include/preamble}
-%\renewcommand{\baselinestretch}{1.5}
 
 %--------------------------------------------------------------------------------------
 % Table of contents and the main text
@@ -48,8 +48,8 @@
 \selectthesislanguage
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%\include{include/titlepage}		   % Szakdolgozat/Diplomaterv címlap
-\include{include/titlepage-tdk}	% TDK címlap
+\include{include/titlepage}		   % Szakdolgozat/Diplomaterv címlap
+%\include{include/titlepage-tdk}	% TDK címlap
 %\include{include/titlepage-otdk}   % OTDK címlap
 
 \includepdf[pages=-]{figures/feladat.pdf}
