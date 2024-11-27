@@ -11,7 +11,6 @@ Egyik, hogy a Linda \index{Linda} csak egy \un koordinációs nyelv \cite{morris
 Ezen megközelítés ereje abban rejlik, hogy a fejlesztés nagy része ismert eszközökkel, megszokott környezetben történhet.
 Hasonlóan látható a sikeressége is, hiszen eredetileg a készítők a C (\textit{C-Linda}) és Fortran (\textit{Fortran-Linda}) programozási nyelvek kiterjesztéseként hozták létre \cite{ahuja_linda_1986}, azonban az évek során sok másik nyelvhez készültek külső fejlesztőktől különböző megvalósítások.
 Ezek között találhatóak több esetben a HPC környezetben klasszikusan előforduló nyelveken kívül, elsősorban nagyvállalati kontextusban használt nyelvek is; ilyenek többek közt a Java \cite{sun_microsystems_javaspaces_2011, lehman_hitting_2001}, de még szkript nyelvekhez, mint például a Ruby \cite[Part 3 -- Rinda]{seki_druby_nodate} és a Python \cite{andrew_wilkinson_pylinda_2007}, is készültek implementációk.
-% TODO PyLinda
 
 A másik kulcsa az egyszerűségnek, hogy az előzőekben leírt gazdanyelv kiegészítéséhez pusztán hat műveletet vagy szabad függvényt ({\selectlanguage{english}free function}) használ fel.
 Ezek mindegyike egy--egy egyszerű részfeladatot old meg a párhuzamos működés megvalósítása érdekében: az összes processzel megosztott \un\nes{} tér (\textit{\ac{TS}}, innentől, az eredeti publikációt követve csak \acs{TS}, \cite{ahuja_linda_1986}) állapotának olvasását vagy módosítását teszik lehetővé a programozó számára.
@@ -211,7 +210,6 @@ nem állítható vissza egy függvénnyé, amit meghívnak, és egy híváshoz t
 Sajnos teljes kompatibilitás még a makrók felhasználásával sem megoldható, mert az előzőekben említett függvény és paraméterlista kettest nem lehet előállítani egy tényleges függvényhívás szintaktikájából.
 A sablonokkal ellentétben azonban, az előfeldolgozó képes arra, hogy ha a függvényhívásnál a függvény is külön zárójellel van körbefogva (pl.\ \texttt{(fv)(1, 2)}), akkor ezt a konstrukciót a függvény nevét tartalmazó sztringre, a függvényre mutató mutatóra és a paraméterek listájára bontsa szét.
 
-% TODO LUT
 Ezekből az adatokból megkonstruálható egy globális {\selectlanguage{english}\ac{LUT}}, amelyik az egyes függvények neveihez rendeli a függvénymutatókat.
 Ha ezt a program futásának elején, statikus inicializálókkal valósítjuk meg, figyelve, hogy a globális statikus változók nem specifikált inicializálási sorrendje ne okozzon problémát, akkor a program bármely futó folyamata rendelkezik a számára helyes sztring--függvénymutató összerendelésekkel.
 
