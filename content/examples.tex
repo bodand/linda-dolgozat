@@ -7,15 +7,14 @@ Ezt felhasználva ebben a fejezetben olyan példák kerülnek bemutatásra, amel
 
 \section{Oktatási példák}
 
-A következőkben olyan leírások találhatóak, amelyek különböző párhuzamos programozási eszközök és technikák használatát mutatják röviden be, majd egy konkrét feladatkiírás, amelyiknek a megoldásának általános leírása a bemutatott technikát használja.
-Egyes helyeken a teljes megoldás kódját is feltüntettem.
+A következőkben találhatóak olyan leírások, amelyek különböző párhuzamos programozási eszközök és technikák használatát mutatják röviden be, majd egy konkrét feladatkiírás, amelyiknek a megoldásának általános leírása a bemutatott technikát használja.
+Egyes helyeken a teljes megoldás kódja feltüntettem.
 
 \subsection{Csatorna alapú kommunikáció}
 
-\Aref{subsec:linda-model}.~szakasz azt állítja, hogy a Linda általánosítás a CSP modell felett.
-Ebbe a megállapításba beletartozik, hogy a CSP által biztosított csatornák megvalósíthatóak a Linda eszközeivel.
-Ehhez tegyük fel, hogy egy csatornának számítanak azok az \nes{} értékek, amelyek egy csatorna azonosítóval kezdődnek.
-A csatorna viselkedéshez ezt \ats{} részhalmazt kell úgy manipulálni, hogy a beszúrás és törlés FIFO sorrendben történjen.
+\Aref{subsec:linda-model}.~szakasz azt állítja, hogy a Linda általánosítás Hoare CSP modellje felett.
+Ebbe a megállapításba beletartozik, hogy a CSP által biztosított csatornák megvalósíthatóak a Linda által nyújtott elemek segítségével.
+Ez belátható a \ts{} olyan módú felhasználásával, ahol egy adatszerkezetnek adott prefixű \nes{}ek tartoznak össze egy csatorna pufferjébe, a műveletek pedig ezen értékekkel dolgoznak a \ts--ben, a beszúrási sorrendet figyelve.
 
 \begin{xrcs}
     pwc: Parallel Word Count. Fájlok méretét kell meghatározni, és kiírni a szavak, sorok, és karakterek (bájtok, ASCII) számát.
@@ -24,21 +23,21 @@ A csatorna viselkedéshez ezt \ats{} részhalmazt kell úgy manipulálni, hogy a
 
 \begin{sln}\label{sln:csp-ch-buf}
     Az alábbi megoldás egy 1 elemű pufferelt csatornát valósít meg. Elkülöníti a csatornákkal kapcsolatos műveleteket a \texttt{make\_channel}, \texttt{enq\_msg} és \texttt{deq\_msg} függvényekbe.
-    A megoldáshoz tartozó kódrészlet megtalálható \aref{x:subsec:sln-csp}.~függelékben.
+    A megoldáshoz tartozó kódrészlet megtalálható \aref{x:subsec:sln-csp}.~szakaszban.
 \end{sln}
 
 \begin{sln}\label{sln:csp-ch-unbuf}
     Az alábbi megoldás egy nem pufferelt csatornát valósít meg.
     A biztosított függvények azonosak \aref{sln:csp-ch-buf}.~megoldásban leírtakkal, ezek azonban nem várakoznak a csatornára írás esetén, hanem mindig ,,elküldik'' az üzenetet.
     Hasonlóan, a \texttt{real\_main} és \texttt{read\_file} függvények megegyeznek \aref{sln:csp-ch-buf}.~megoldásbelivel, így itt nem kerültek reprodukálásra.
-    A kódrészlet itt is \aref{x:subsec:sln-csp}.~függelékben található.
+    A kódrészlet itt is \aref{x:subsec:sln-csp}.~szekcióban található: \aref{lst:ex-csp-unbuf}.~listázás.
 \end{sln}
 
-\subsection{Scatter--Gather minta}
+\subsection{Scatter--Gather idióma}
 
 A scatter és gather eszközök lehetővé teszik egy adathalmaz szétszórását különböző kicsi (gyakran egyszerre feldolgozható) darabokká, vagy összegyűjtését egy nagy tömbbe.
 Ezzel megvalósítható hogy egy alapból nagy adathalmazon lehessen valami olyan műveletet párhuzamosítva megoldani, ahol a feladatot különböző, nagy részben (vagy teljesen) független részfeladatok formájában meg lehet oldani.
-Egy általános eset látható \aref{fig:scatter-gather}.~ábrán, ahol a scatter művelet a fentről lefele mutató piros (root folyamatból szétszóró) nyilak, a gather pedig az ellentétes irányú kékek.
+Egy általános ábra látható \aref{fig:scatter-gather}.~ábrán, ahol a scatter művelet a fentről lefele mutató piros (root folyamatból szétszóró) nyilak, a gather pedig az ellentétes irányú kékek.
 
 \begin{figure}[htb]
     \centerline{\resizebox{8.5cm}{!}{\includegraphics{figures/scatter-gather.pdf}}}
@@ -46,22 +45,21 @@ Egy általános eset látható \aref{fig:scatter-gather}.~ábrán, ahol a scatte
     \label{fig:scatter-gather}
 \end{figure}
 
-Több helyen és feladatkörben is találkozhatunk ezzel az mintával: akár még operációs rendszerek fájlműveletei között (\texttt{ReadFileScatter}, \texttt{readv}) is, de párhuzamos számítások szempontjából talán a legfontosabb az MPI környezet, amelyik biztosít ennek az mintának egy konkrét megvalósítását: az \texttt{MPI\_Scatter} és \texttt{MPI\_Gather} függvények az értelemszerű lépést biztosítják a műveletpárból. Léteznek ezeknek a különféle nem--blokkoló variánsai is, amelyek lehetővé teszik, hogy az aktuális kommunikációt ne kelljen megvárni.
+Több helyen és feladatkörben is találkozhatunk ezzel az idiómával: akár még operációs rendszerek fájlműveletei között (\texttt{ReadFileScatter}, \texttt{readv}) is, de párhuzamos számítások szempontjából talán a legfontosabb az MPI környezet, amelyik biztosít ennek az idiómának egy konkrét megvalósítását: az \texttt{MPI\_Scatter} és \texttt{MPI\_Gather} függvények az értelemszerű lépést biztosítják a műveletpárból. Léteznek ezeknek a különféle nem--blokkoló variánsai is, amelyek lehetővé teszik, hogy az aktuális kommunikációt ne kelljen megvárni.
 
 \begin{xrcs}
     Szabványos bemeneten soronként érkeznek CSV fájlok nevei, amelyekben különböző cégek nevei és bevételei találhatóak: a CSV fájlok különböző bevételi forrásra vannak bontva így, egy cég több fájlban, és egy fájlban több cég is elhelyezkedik, egy fájlban egy cég azonban csak egyszer.
     A fájlok nevei után egy teljesen üres sor következik.
     A feladat, hogy ezeket a bevételeket összeszámolja egy adott cégre, amelyet a szabványos bemeneten kapunk meg, a fájlneveket záró üres sor után.
     A megoldást párhuzamos Linda kódban adja meg!
-    Feltételezheti, hogy a teljes összeg nemnegatív és nem haladja meg $2^{64}-1$ értékét, illetve a cégek neveiben nincsen sortörés és vessző.
+    Feltételezheti, hogy a teljes összeg nem haladja meg $2^{64}-1$ értékét, illetve a cégek neveiben nincsen sortörés és vessző.
 \end{xrcs}
 
 \begin{sln}
     Ebben a megoldási lehetőségben az elv, hogy a szavak listája közös, és minden folyamat kap egy intervallumot, hogy melyik fájlokban kell keresnie.
     A párhuzamosítás fokától függő darabszámú intervallumra bontjuk a teljes fájlok listáját, majd az \texttt{eval} függvényt felhasználva ezekre az intervallumokra elindítjuk az összegzést.
-    Mindegyik folyamat egy indexszel van ellátva, amelyikbe a visszatérési értékük (a részösszeg) kerül.
+    Mindegyik folyamat egy indexel van ellátva, amelyikbe a visszatérési értékük (a részösszeg) kerül.
     A főprogram végén az összes részszámítást bevárja, és összeadja a kapott részösszegeket.
-    A megoldáshoz tartozó kód \aref{x:subsec:sln-sg}.~függelékben.
 \end{sln}
 
 \subsection{Szemaforok}
@@ -77,59 +75,40 @@ A szemaforok tulajdonsága, hogy atomivá tehető több művelet egymásutánja,
 \begin{xrcs}
     Hozzon létre egy Linda alapú szemafort, amelyik képes egy adott kódrészletre garantálni, hogy egyszerre csak $n$ folyamat futtatja le!
     A szemaforok zárolására és felengedésére legyen egy--egy függvény, illetve legalább egy ,,konstruktor'' függvény, amelyik beállítja adott szemaforra $n$ értékét.
-    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
+%    Egy példa a használatra látható \aref{lst:ex-semaphore}.~listázásban.
+%    Ha tudja, próbálja megvalósítani aktív várakozás (spin lock) nélkül.
 
-    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
-        int
-        work(int sem) {
-            acquire_lsemaphore(sem);
-            // .. critical section ..
-            release_lsemaphore(sem);
-        }
-
-        int
-        real_main(int, char**) {
-            int sem_handle = new_lsemaphore(3);
-            for (int i = 0; i < 12; ++i) {
-                eval("worker", i, (work)(sem_handle));
-            }
-            wait_workers();
-            return 0;
-        }
-    \end{lstlisting}
+%    \begin{lstlisting}[label=lst:ex-semaphore, caption={Példa a Linda szemafor használatára},gobble=8,language=C,numbers=left]
+%        int
+%        work(int sem) {
+%            acquire_lsemaphore(sem);
+%            // .. critical section ..
+%            release_lsemaphore(sem);
+%        }
+%
+%        int
+%        real_main(int, char**) {
+%            int sem_handle = new_lsemaphore(3);
+%            for (int i = 0; i < 12; ++i) {
+%                eval("worker", i, (work)(sem_handle));
+%            }
+%            wait_workers();
+%            return 0;
+%        }
+%    \end{lstlisting}
 \end{xrcs}
 
 \begin{sln}
     Az alábbi megoldás kihasználja a hatékony várakozás lehetőségét, és nem aktív várakozással kezeli magukat a szemaforokat.
     Egy aktívan várakozó szemafor is teljesíti a feladat előírásait és könnyebben átlátható kódot eredményezhet: egy \texttt{inp} egy ciklusban a szemafor foglalásánál jelentősen egyszerűbb, de jóval több TS írást olvasást okoz.
-    A kód \aref{x:subsec:sln-semaphore}.~függelékben olvasható.
-\end{sln}
-
-\subsection{Eratoszthenész szitája}
-
-Jól ismert algoritmus Eratoszthenész szitája.
-Célja, hogy egy adott intervallumon megkeresse az összes prímszámot. Koncepciója, hogy amikor prímnek jelölünk egy számot, akkor akkor minden többszörösét kitöröljük a prím-jelöltek közül, hiszen biztosan nem prímek.
-Ezt addig ismételjük a megmaradó számokon lépkedve, amíg nem látjuk be minden számról, hogy prím vagy sem.
-
-A párhuzamosítási lehetőség abban rejlik, hogy egy adott szám többszöröseinek törlését az összes többi számtól függetlenül el lehet végezni.
-Emiatt viszont egyszerűen párhuzamosítani is lehet ezt a műveletet.
-
-\begin{xrcs}
-    Adjon egy Linda alapú párhuzamos megvalósítást Eratoszthenész szitájára.
-\end{xrcs}
-
-\begin{sln}
-    Ebben a megoldásban két dologra használjuk a TS--t: elsőként feltöltjük a keresett intervallumban található értékeket, majd felvesszük a kezdő osztó értékét.
-    Utána megfelelő számú párhuzamos számítást elindítunk, amelyek mindegyike egyesével kiveszi a következő osztót a TS--ből, majd annak többszöröseit kiveszi az intervallumból.
-    A program végén, amikor az összes párhuzamosan futó függvény visszatért, a TS--ben maradó értékeket, mint a prímeket, kiírja.
-    A megoldás kódja olvasható \aref{x:subsec:sieve}.~függelékben.
+    A kód \aref{x:subsec:sln-semaphore}.~szekcióban olvasható.
 \end{sln}
 
 \section{Párhuzamos fordítás}
 
 A manapság egyre nagyobbra növő kódbázisok problémája, hogy egy-egy teljes fordítás nagyon sokáig tart.
 Ahogy növekszik a forrásfájlok mérete és azok száma, a komplikált, nagy feladatokat megoldó projektek fordítása egyre több és több ideig tart.
-Az egyik legjobb példa erre a jelenségre az LLVM, ahol csak az LLVM modul soros fordítása a számomra elérhető asztali gépen (ld. \ref{sub:results}.\ szekció a hardver specifikációjáért) nagyságrendileg 60 percig (!) tart.
+Az egyik legjobb példa erre a jelenségre, ami nyílt forráskódú projekt, az az LLVM, ahol csak az LLVM modul soros fordítása a számomra elérhető asztali gépen (ld. \ref{sub:results}.\ szekció a hardver specifikációjáért) nagyságrendileg 60 percig (!) tart.
 
 A modern informatikában használt nyelvek saját eszközeik rendelkeznek a megfelelő infrastruktúrával, hogy ezt a problémát különböző megoldásokkal orvosolni próbálják a nyelv ökoszisztémájába illeszthető módon.
 A gyakori esetekben a lokális gépen található, előző fordítások során már előállított félkész fordítási melléktermékek újrafelhasználásán keresztül megvalósított \un inkrementális fordítás, és párhuzamosítás a biztosított megoldás.
@@ -138,12 +117,12 @@ A demó programban az utóbbit valósítom meg, bár egyszerűen megoldható az 
 C és C++ projektek esetében a \textit{de facto} szabvánnyá vált CMake program látja el az általános projektmenedzsment feladatot: a konkrét fordítást kiszervezi egy erre specializált programra (pl. make, ninja), ami számára generál egy konfigurációs fájlt, ami alapján dolgozhat.
 Mind az inkrementális fordítás, mind a párhuzamosítás ebben a rétegben kerül megvalósításra (CMake futtatásonként mindent újra legenerál, és szigorúan egy szálon fut):
 Például a make eszköz használatával egy C vagy C++ projekt csak akkor hoz létre újra egy objektum fájlt, ha a beállított szabály szerint annak a bemenete megváltozott a fájlrendszer módosítási dátumai alapján.
-A legtöbb make megvalósítás támogat párhuzamosítást is, különféle hatékonysággal. A parallel fordítást jobban kihasználó eszköz a ninja.
-Az inkrementális fordításra adott megoldása azonos, azonban a párhuzamosítás elsődleges szempont volt a tervezésénél.
-Ennek megfelelően több esetben a ninja gyorsabb fordítási sebességet biztosít, a jobban kidolgozott párhuzamosítási alrendszere miatt.
+A legtöbb make megvalósítás támogat párhuzamosítást is, különféle hatékonysággal.
+A parallel fordítás irányban elindulva azonban találjuk a ninja eszközt, ami az inkrementális fordítás megvalósítására azonos módszert alkalmaz, mint a make, de amelyet úgy hoztak létre, hogy a párhuzamosítást tartották elsősorban szem előtt.
+Ennek megfelelően több esetben a ninja gyorsabb fordítási sebességet biztosít, pusztán a jobban kidolgozott párhuzamosítási alrendszere miatt.
 
 Ezt az ötletet felhasználva egy Linda alapú megvalósítást is lehetséges készíteni, amelyik a Linda és az alatta található MPI lehetőségeit kihasználva biztosít egy párhuzamosítást kiemelten kihasználó fordító környezetet.
-A programom a Linda Build nevet~viseli.
+A program a Linda Build nevet~viseli.
 
 Az általános ötlet egyszerű: a fordítandó fájlok listáját feltöltjük a TS--be, amiből a feldolgozó folyamatok az éppen felhasználtat ki tudják venni.
 Az éppen kivett parancsot feldolgozza egy--egy megfelelő műveletet végző folyamat, majd a készített fájlt visszateszi a TS--be, ezzel lehetővé téve más folyamatoknak, hogy az attól a fájltól függő parancsot végrehajtsa. A következőkben ennek részletes, a megalkotott Linda implementációt használó megvalósítása következik.
@@ -171,20 +150,20 @@ Jelenleg a programok nevei és a parancsnév (pl.\ ,,\texttt{CC}'') és a futtat
 int start_workers() {
 	int parallelism = lrt::this_runtime().world_size();
 	for (int i = 0; i < parallelism; ++i)
-		eval("_CC_WORKER", (worker)("CC", "gcc", " -c", i));
+		eval("_CC_WORKER", worker("CC", "gcc", " -c", i));
 	for (int i = 0; i < parallelism; ++i)
-		eval("_LD_WORKER", (worker)("LD", "gcc", "", i));
+		eval("_LD_WORKER", worker("LD", "gcc", "", i));
 	return parallelism;
 }
 \end{lstlisting}
 
 Ezek után a \texttt{worker} függvény kódja tartalmaz még érdemi kódrészletet.
-Az ebben megjelenő \texttt{execute\_process} részletes tárgyalását elhagyom, mert csak az operációs rendszer folyamatindító rendszerhívásait hívja meg, semmi érdemleges kódot nem tartalmaz.
+Az ebben megjelenő \texttt{execute\_process} részletes tárgyalását elhagyom, mert csak az operációs rendszer folyamatindító rendszerhívásainak elfedését oldja meg, semmi érdemleges kódot nem tartalmaznak.
 
 A \texttt{worker} függvény maga sem komplikált: addig fut egy ciklusban, amíg talál általa végrehajtható parancsokat, azaz van még a kapott paranccsal kezdődő ennes a TS--ben.
 Amint ezek elfogytak, növeli a sikeresen lefutott folyamatok számát, és kilép.
 Ami fontos tulajdonsága a Lindának, és itt kihasználja a program, hogy az egyes műveletek atomiak.
-Amikor az ,,\texttt{in("\_WORKERS\_FINISHED", ldb::ref(\&current))}'' sor lefut, akkor az az \nes{} megszűnik a TS--ben lenni, és így ha másik folyamat is hasonló időben végezne, akkor is csak az egyik fogja sikeresen kivenni, hogy növelje; a másiknak várakoznia kell a megfelelő \texttt{out} utasításig.
+Amikor az ,,\texttt{in("\_WORKERS\_FINISHED", ldb::ref(\&current))}'' sor lefut, akkor az az 2--es megszűnik a TS--ben lenni, és így ha másik folyamat is hasonló időben végezne, akkor is csak az egyik fogja sikeresen kivenni, hogy növelje; a másiknak várakoznia kell a megfelelő \texttt{out} utasításig.
 
 \begin{lstlisting}[numbers=left, language=C++, label=lst:lb-worker, caption={A futtató folyamat}]
 int worker(std::string cmd, std::string exe, std::string args, int worker_id) {
@@ -211,7 +190,7 @@ Minden sor három adatot tárol: fordítani (,,\texttt{CC}'') vagy összeilleszt
 Ennek a projektnek a vizuális reprezentációja található \aref{fig:lb-demo-graphic}.~ábrán.
 Az ábrán látható színek segítenek a párhuzamosítási lehetőségeket szemléltetni: az egyes forrásfájlok függetlenek egymástól, pusztán az összeillesztési lépésnél kell az egyes források fordítását bevárni.
 
-\begin{lstlisting}[numbers=left, label=lst:lb-conf, caption={Linda Build konfiguráció példa}]
+\begin{lstlisting}[numbers=left, label=lst:lb-conf, caption={Példa Linda Build konfiguráció}]
 CC src1.o src1.c
 CC src2.o src2.c
 CC src3.o src3.c
@@ -221,43 +200,42 @@ LD exec src1.o src2.o src3.o src4.o
 
 \begin{figure}[!bt]
 	\center{\resizebox{12cm}{!}{\includegraphics{figures/lb-conf.pdf}}}
-	\caption{A példaprojekt vizuális ábrázolása}
+	\caption{A példa projekt vizuális ábrázolása}
 	\label{fig:lb-demo-graphic}
 \end{figure}
 
 \subsection{Eredmények}\label{sub:results}
 
-Annak érdekében, hogy látható legyen, hogy ezzel a rövid kódrészlettel is lehetséges, jól párhuzamosított kódot megvalósítani, a megvalósított fordítórendszer sebességét egy szintetikus projekt fordításával mértem le.
+Annak érdekében, hogy látható legyen, hogy ezzel a rövid kódrészlettel is lehetséges, jól párhuzamosított kódot megvalósítani, a megvalósított fordító rendszer sebességét egy szintetikus projekt fordításával mértem le.
 
 Ehhez szükség volt egy olyan ,,projektre'', amelyik lehetővé teszi a konkrét fordítási sebesség mérését, és nem csak egy egyszerű minta C++ projekt.
-Ennek hiánya úgy jelentkezik, hogy ha nem direkt olyan fájlokat fordítunk, amelyek lassan fordulnak, akkor a párhuzamosítás közben a tényleges mérés redukálódik egyszerűen arra, hogy az adott operációs rendszer milyen gyorsan tudja elindítani a fordító processzt.
+Ennek hiánya úgy jelentkezik, hogy ha nem direkt olyan fájlokat fordítunk, amelyek szándékosan lassan fordulnak, akkor a párhuzamosítás közben a tényleges mérés redukálódik egyszerűen arra, hogy az adott operációs rendszer milyen gyorsan tudja elindítani a fordító processzt.
 
 Szerencsére a C++ nyújt több különböző lehetőséget arra, hogy a fordítást elegendően lelassítsam.
-A meta--programozást használtam arra, hogy a Fibonacci számokat számoljam ki rekurzív megoldással.
+Itt sablon meta--programozást használtam arra, hogy a Fibonacci számokat számoljam ki rekurzív megoldással.
 Mivel ez nagyon sok sablon példányosítást jelent, így egy--egy ilyen fájl fordítása már mérhető ideig tart.
-A fájlok darabszámát előállításhoz egy Perl szkriptet használtam, amely a források sokszorosítása mellett a szükséges ,,\texttt{Makefile}'', ,,\texttt{ninja.build}'' és ,,\texttt{lb.build}'' fájlokat is elkészíti.
+A fájlok darabszámát előállítani egy Perl szkripttel lehetséges, amely a források sokszorosítása mellett a szükséges ,,\texttt{Makefile}'', ,,\texttt{ninja.build}'' és ,,\texttt{lb.build}'' fájlokat is elkészíti.
 
-A mérésre egy 16 magos (32 ha \ac{HT} be van kapcsolva) AMD Ryzen 9 7950X processzorral, 64 GiB operatív tárral rendelkező asztali gépet használtam; a diszk, amelyen a mérés történt egy Samsung 990 PRO 500 GiB SSD.
+A mérésre egy 16 magos (32 HT-vel) AMD Ryzen 9 7950X processzorral, 64 GiB operatív tárral rendelkező asztali gép volt felhasználva; a diszk, amelyen a mérés történt egy Samsung 990 PRO 500 GiB SSD.
 A teljes mérés \hbox{Microsoft Windows 10 ($10.0.19045.4291$)} operációs rendszer alatt történt, a felhasznált MPI megvalósítás az MSMPI ($10.1.12498.18$). A futtatott programok, a Linda megvalósítás mellett a GNU make ($4.3$), és ninja ($1.11.1$).
 Előbbi a MinGW környezettel fordítva, utóbbi az Microsoft Visual C++ rendszerrel.
 
 A mérés eredményei \aref{fig:bs-speed}.~ábrán és \aref{tbl:bs-speed}.~táblázatban\label{hf:tbl-ref} láthatóak.
-Fontos megjegyezni, hogy a Linda megvalósítás esetén az $1$ szálú futtatás eredményekhez hozzátartozik, hogy a rendszer nem támogatja a tisztán soros végrehajtást, így látszólag ,,jobban'' teljesít ebben az esetben, pedig csak az történik, hogy egy--egy fordító és linkelő folyamat indul, ezek viszont képesek parallel is futni, így valamilyen alacsony mértékeben párhuzamosítást valósítanak meg, ami mérhető sebességnövekedést okozott.
+Fontos megjegyezni, hogy a Linda megvalósítás esetén az $1$ szálú futtatás eredményekhez hozzátartozik, hogy a rendszer nem támogatja a tisztán soros végrehajtást, így látszólag ,,jobban'' teljesít ebben az esetben, pedig csak az történik, hogy egy--egy fordító és linkelő folyamat indul, ezek viszont képesek parallel is futni, így valamilyen alacsony mértékeben párhuzamosítást valósítanak meg, ami mérhető sebességnövekedést okoz a mérés során.
 
 Ezt figyelembe véve \aref{fig:bs-speed}.~ábrán látható, hogy a három megvalósítás, nagyságrendileg azonos futási időt generál $8$--as szintű párhuzamosításig.
-Ez nem is igazán izgalmas az ábrának.
+Ez a része, emiatt, nem is igazán izgalmas az ábrának.
 Ennél a pontnál azonban a GNU make stagnálásba kezd, és a további párhuzamosítási fokozatok nem befolyásolják a fordítás sebességét.
 
 További parallelizációnál látszik, hogy a ninja rendszer a hatékonyabban tudja a párhuzamosítást megvalósítani, mint a saját Linda alapú megvalósításom, amelyik, bár arányosan gyorsul, de mindig egy kicsivel (3--4 másodperccel) le van maradva tőle.
 
-Az előző bekezdésben említett túl agresszív párhuzamosítás miatt a 32--es értéknél látható, hogy a Linda már visszaesést produkál.
-Ez a hardver elérhető párhuzamosításának túllépése miatt van, hiszen a (\ac{HT}-vel) 32 szál már a fordítási és linkelési lépések egyszerre történő párhuzamosítását nem tudja megfelelően kiszolgálni.
+Az előző bekezdésben említett túl agresszív párhuzamosítás miatt a 32--es érték látható, hogy a Linda esetében már visszaesést produkál.
+Ez a hardver elérhető párhuzamosításának túllépése miatt van, hiszen a (HT--vel) 32 szál már a fordítási és linkelési lépések egyszerre történő párhuzamosítását nem tudja megfelelően kiszolgálni.
 Ezzel szemben a ninja csak 32 darab folyamatot indít egyszerre, így az még nem feszíti túl a hardvert.
 
 Összesítve látható, hogy bár nem a leggyorsabb eszköz lett az Linda Build, de a kód méretét és egyszerűségét tekintve arányosan egy kifejezetten jó megoldást ad a párhuzamos fordítás problémára.
-%Emellett kiemelkedő teljesítménynek tartom, hogy az egyik legelterjedtebb projekt karbantartó eszköznél (GNU make) megbízhatóan gyorsabb fordítást tudott produkálni, egy ennyire kisméretű kódbázissal.
-Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem többek között egy tényleges konfigurációs nyelvet és annak a feldolgozó kódrészleteit is tartalmazzák, így nem hasonlítóhatóak kódsorra össze, mindazonáltal nagyságrendileg 300 sor kódból ilyen eredményt elérni alátámasztja a megvalósításom hatékonyságát.
-Említésre méltó, hogy az itt elért eredmények mellett az igazi előnye a megvalósításomnak, hogy a kód bármiféle módosítás nélkül egy nem \ac{SMP} elvű gépen (pl.~egy szuperszámítógép) több node közötti párhuzamosítás lehetőségét is kihasználhatja, egyre nagyobb parallelizmus eléréséhez.
+Emellett kiemelkedő teljesítménynek tartom, hogy az egyik legelterjedtebb projekt karbantartó eszköznél megbízhatóan gyorsabb fordítást tudott produkálni, egy ennyire kisméretű kódbázissal.
+Ugyan a többi eszköz kódbázisa nem csak a párhuzamosítási kódot, hanem többek között egy tényleges konfigurációs nyelvet és annak a feldolgozó kódrészleteket is tartalmazzák, így nem hasonlítóhatóak kódsorra össze, mindazonáltal nagyságrendileg 300 sor kódból ilyen eredményt elérni alátámasztja a Linda erejét, mint párhuzamosítási eszközt, ami még a mai körülmények között is megállja a helyét, akár még a mára erősen párhuzamosítható asztali környezetben is.
 
 \begin{table}[bht!]
     \begin{tabularx}{\linewidth}{|X||c|c|c|c|c|c|c|c|}
@@ -285,7 +263,7 @@ Említésre méltó, hogy az itt elért eredmények mellett az igazi előnye a m
                              ymajorgrids,
                              yminorgrids,
                              xmajorgrids,
-                             width=9cm,
+                             width=10cm,
                              xtick={1,2,4,8,16,24,30,32},
                              ytick={0,25,50,100,150,200,250,300},
                              log ticks with fixed point,
@@ -331,5 +309,129 @@ Említésre méltó, hogy az itt elért eredmények mellett az igazi előnye a m
     \label{fig:bs-speed}
 \end{figure}
 
+\begin{figure}
+        \centerline{\begin{tikzpicture}
+            \begin{semilogyaxis}[xlabel=Párhuzamosítás,
+                ylabel=Fordítási idő (s),
+                ymajorgrids,
+                yminorgrids,
+                xmajorgrids,
+                width=10cm,
+                xtick={1,2,4,8,16,24,32,40,48,52},
+                ytick={0,12,25,50,100,150,200,250,300},
+                log ticks with fixed point,
+                xmode=linear]
+                \addplot+ [smooth] coordinates {
+                    (1,  252.336)
+                    (2,  125.2852)
+                    (4,  63.9115)
+                    (8,  31.7481)
+                    (16, 19.7394)
+                    (24, 13.2518)
+                    (32, 10.3957)
+                    (48, 7.7506)
+                    (52, 7.357)
+                };
+                \addlegendentry{Linda Build}
+
+                \addplot+ [smooth] coordinates {
+                    (1,  344.3822)
+                    (2,  181.777)
+                    (4,  88.7432)
+                    (8,  58.9286)
+                    (16, 31.8066)
+                    (24, 22.1274)
+                    (32, 17.3024)
+                    (40, 15.2778)
+                    (47, 13.9716)
+                    (48, 12.9912)
+                    (49, 19.9202)
+                    (52, 15.795)
+                };
+                \addlegendentry{ninja}
+
+                \addplot+ [smooth,mark=triangle*] coordinates {
+                    (1,  377.31533330)
+                    (2,  200.6223333)
+                    (4,  82.64033333)
+                    (8,  51.9836)
+                    (16, 25.87266667)
+                    (24, 17.033)
+                    (32, 13.1555)
+                    (40, 13.6753)
+                    (47, 10.2708)
+                    (48, 9.9452)
+                    (49, 15.18)
+                    (52, 12.8283)
+                };
+                \addlegendentry{GNU make}
+            \end{semilogyaxis}
+    \end{tikzpicture}}
+    \caption{A különböző rendszerek fordítási sebességei (Komondor)}
+    \label{fig:bs-speed2}
+\end{figure}
 
 
+\begin{figure}
+    \centerline{\begin{tikzpicture}
+            \begin{axis}[xlabel=Párhuzamosítás,
+                ylabel=Fordítási idő (s),
+                ymajorgrids,
+                yminorgrids,
+                xmajorgrids,
+                width=10cm,
+                xtick={1,2,4,8,16,24,32,40,48,52},
+%                ytick={0,12,25,50,100,150,200,250,300},
+                log ticks with fixed point,
+                xmode=linear]
+                \addplot+ [smooth] coordinates {
+                    (1,  29.3658)
+                    (2,  33.9484)
+                    (4,  15.9852)
+                    (8,  10.2936)
+                    (16, 11.7868)
+                    (24, 12.5866)
+                    (32, 12.4178)
+                    (40, 13.051)
+                    (48, 14.014)
+                    (52, 21.5616)
+                };
+                \addlegendentry{2--10000}
+
+                \addplot+ [smooth] coordinates {
+                    (1,  42.6796)
+                    (2,  233.8298)
+                    (4,  0)
+                    (8,  0)
+                    (16, 0)
+                    (24, 0)
+                    (30, 0)
+                    (32, 0)
+                    (40, 0)
+                    (47, 0)
+                    (48, 0)
+                    (49, 0)
+                    (52, 0)
+                };
+                \addlegendentry{2--40000}
+%
+%                \addplot+ [smooth,mark=triangle*] coordinates {
+%                    (1,  377.31533330)
+%                    (2,  200.6223333)
+%                    (4,  82.64033333)
+%                    (8,  60.62033333)
+%                    (16, 25.87266667)
+%                    (24, 17.033)
+%                    (32, 16.857)
+%                    (40, 13.9147)
+%                    (47, 10.2708)
+%                    (48, 9.9452)
+%                    (49, 15.18)
+%                    (52, 12.8283)
+%                };
+%                \addlegendentry{GNU make}
+            \end{axis}
+    \end{tikzpicture}}
+    \caption{Eratoszthenész szitája a Komondoron}
+    \label{fig:bs-speed3}
+\end{figure}
